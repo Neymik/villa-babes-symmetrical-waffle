@@ -1,0 +1,30 @@
+{
+  "name": "Villa Babes",
+  "description": "Base Level Extension",
+  "version": "1.0",
+  "manifest_version": 3,
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": "Villa Babes logo.png"
+  },
+  "permissions": [
+    "tabs",
+    "storage",
+    "scripting"
+  ],
+  "host_permissions": [
+    "https://onlyfans.com/*"
+  ],
+  "optional_host_permissions":[
+    "https://*/*", 
+    "http://*/*" 
+  ],
+  "content_scripts": [
+    {
+      "js": ["content.js"],
+      "matches": [
+        "https://onlyfans.com/*"
+      ]
+    }
+  ]
+}

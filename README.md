@@ -1,5 +1,11 @@
 # symmetrical-waffle
 
+To add bun
+```bash
+export BUN_INSTALL="/Users/neymik/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+```
+
 To install dependencies:
 
 ```bash

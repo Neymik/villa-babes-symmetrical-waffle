@@ -2,10 +2,21 @@
   "name": "symmetrical-waffle",
   "module": "app.js",
   "type": "module",
+  "scripts": {
+    "start": "bun run app.js",
+    "dev": "bun run app.js --watch",
+    "test": "bun test --timeout 10000"
+  },
   "devDependencies": {
     "bun-types": "latest"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
+  },
+  "dependencies": {
+    "@elysiajs/cors": "^0.6.0",
+    "@elysiajs/static": "^0.6.0",
+    "openai": "^4.6.0",
+    "redis": "^4.6.9"
   }
 }

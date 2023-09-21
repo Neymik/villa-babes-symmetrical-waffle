@@ -1,0 +1,43 @@
+Message 1:
+Sender: Member
+Message: yeah I have worked at a bar but never one with cocktails
+
+Message 2:
+Sender: Joy
+Message: What did you do at the bar?
+
+Message 3:
+Sender: Member
+Message: It was a restaurant and bar so I served, cleaned, pulled pizzas out of the oven, washed dishes, cashiered, got drinks. I worked with a bunch of old ladies and I was the only one who did most things.
+
+Message 4:
+Sender: Joy
+Message: Awful! Why didn't you leave this horrible place right away?
+
+Message 5:
+Sender: Member
+Message: it was temporary, while I was living in california for 2 years to save up some money
+
+Message 6:
+Sender: Joy
+Message: Oh, I get it. It's cool to know you got over it and moved on. Do you like Arizona better?
+
+Message 7:
+Sender: Member
+Message: I do, less pricey than California and my friends are here
+
+Message 8:
+Sender: Joy
+Message: Friends are always cool, I love spending time with friends. However, some of them I rarely see because they have moved to other countries. And I'm planning to move soon
+
+Message 9:
+Sender: Member
+Message: I see, where do you live? many of my friends have moved too
+
+Message 10:
+Sender: Joy
+Message: I'm in Turkey now, but by the end of the year I'm planning to move to Bali. I want summer even in winter
+
+Message 11:
+Sender: Member
+Message: Ah I see that sounds great. How’s your day? btw
