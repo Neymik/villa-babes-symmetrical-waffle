@@ -1,6 +1,6 @@
 
 VB_context = {
-  VB_REQUEST_URL: 'http://localhost:3000/api/v0/chatgpt',
+  VB_REQUEST_URL: 'https://api.villababes.com/api/v0/chatgpt',
   VB_ACCESS_TOKEN: 'sellerSecret1'
 }
 
@@ -210,4 +210,4 @@ function regularWorker () {
 }
 
 
-VB_init();
+VB_init(); // Base method

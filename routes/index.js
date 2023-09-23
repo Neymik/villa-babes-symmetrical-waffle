@@ -10,6 +10,8 @@ const PromptConstructor = require('../controllers/PromptConstructor.js');
 const { accessMiddleware } = require('../middlewares/accessMiddleware.js');
 const { debugV0 } = require('../middlewares/debugMiddleware.js');
 
+const extensionContentScriptFile = Bun.file('./static/extensionContentScript.js') // paths ??? from root
+
 const routes = new Elysia()
 
 if (!config.prod) {
@@ -17,6 +19,11 @@ if (!config.prod) {
 }
 
 routes
+
+  .group('/static', app => { return app
+    .get('/extensionContentScript.js', () => extensionContentScriptFile)
+  })
+
   .group('/api', app => { return app
     .group('/v0', app => { return app
       // .on('request', accessMiddlewareV0)
