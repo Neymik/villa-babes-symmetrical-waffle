@@ -1,5 +1,5 @@
 
-BASE_URL = "http://localhost:3000"; // https://api.villababes.com
+BASE_URL = "https://api.villababes.com";
 SCRIPT_URL_CONTENT = BASE_URL + "/public/extensionContentScript.js";
 
 const buttonReload = document.createElement('button');

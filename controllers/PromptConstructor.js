@@ -119,10 +119,13 @@ class PromptConstructor {
     const memberContext = '' // await redis.get('memberContext' + memberId);
 
     for (const message of messagesArray) {
+
+      const sender = message.sender == 'Creator' ? 'Joy Summer' : 'Member';
+
       messageNo += 1;
       dialogContext += '\n'
       dialogContext += 'Message ' + messageNo + '\n';
-      dialogContext += 'Sender: ' + message.sender + '\n';
+      dialogContext += 'Sender: ' + sender + '\n';
       dialogContext += 'Text: ' + message.text + '\n';
 
       if (messageX == message.text) {
@@ -148,7 +151,7 @@ class PromptConstructor {
       prompt += 'End the member context. \n';
     }
 
-    
+
     if (requestTypes[requestType] && messageXno) {
       prompt += requestTypes[requestType].prompt.replaceAll('Message X', 'Message ' + messageXno);
     } else {

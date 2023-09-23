@@ -49,16 +49,6 @@ function VB_init () {
     return
   }
 
-  const requestButton = VB_getElement('requestButton', 'button', 'chatBlock', 'chatBlock');
-  const requestOutput = VB_getElement('requestOutput', 'input', 'chatBlock', 'chatBlock');
-
-  requestButton.innerHTML = 'Next';
-  requestButton.addEventListener('click', VB_llmRequestSend);
-
-  requestOutput.setAttribute('placeholder', 'requestOutput');
-  VB_context.chatBlock.requestOutput = requestOutput;
-
-
   setInterval(regularWorker, 1000);
 
 }
@@ -79,7 +69,7 @@ function VB_removeElements (group) {
 
 }
 
-function VB_getElement (name, type, group = '', append = '') {
+function VB_getElement ({ name, type, group = '', onCreateCallback = ()=>{} }) {
 
   let elemBase = VB_context;
 
@@ -89,11 +79,6 @@ function VB_getElement (name, type, group = '', append = '') {
     }
 
     elemBase = VB_context[group];
-  }
-
-  let elem = elemBase[name];
-  if (elem) {
-    return elem
   }
 
   const elemId = 'VB_' + name + type;
@@ -108,9 +93,7 @@ function VB_getElement (name, type, group = '', append = '') {
   elem.id = 'VB_' + name + type;
   elemBase[name] = elem
 
-  if (append) {
-    VB_context[append].appendChild(elem);
-  }
+  onCreateCallback(elem);
 
   return elem
 }
@@ -177,7 +160,7 @@ function VB_rerenderEmojiReactions () {
   for (const messagesNode of messagesNodes) {
     messageNo += 1;
     const messageTextNode = messagesNode.querySelector('.b-chat__message__body')
-    const emojiHolder = VB_getElement('emojiHolder' + messageNo, 'div', 'messagesBlock')
+    const emojiHolder = VB_getElement(name = 'emojiHolder' + messageNo, type = 'div', group = 'messagesBlock')
     emojiHolder.classList.add('emojiHolder');
     messageTextNode.appendChild(emojiHolder);
 
@@ -185,7 +168,7 @@ function VB_rerenderEmojiReactions () {
 
     for (const emoji of VB_emojisToRender) {
       const elemName = 'VB_Button' + messageNo + emoji.type;
-      const emojiButton = VB_getElement(elemName, 'button', 'messagesBlock') 
+      const emojiButton = VB_getElement(name = elemName, type = 'button', group = 'messagesBlock') 
       emojiButton.innerHTML = emoji.value;
       emojiButton.addEventListener('click', () => {
         VB_llmRequestSend({
@@ -201,7 +184,27 @@ function VB_rerenderEmojiReactions () {
 }
 
 
+function VB_setupBaseInterface() {
+
+  VB_getElement(name = 'requestButton', type = 'button', group = 'chatBlock',
+    onCreateCallback = (elem) => {
+      VB_context.chatBlock.appendChild(elem);
+      elem.innerHTML = 'Next';
+      elem.addEventListener('click', VB_llmRequestSend);
+    }
+  );
+  VB_getElement(name = 'requestOutput', type = 'input', group = 'chatBlock',
+    onCreateCallback = (elem) => {
+      VB_context.chatBlock.appendChild(elem);
+      elem.setAttribute('placeholder', 'requestOutput');
+    }
+  );
+
+}
+
+
 function regularWorker () {
+  VB_setupBaseInterface();
   VB_scrapMessages();
   VB_rerenderEmojiReactions();
 }

@@ -13,5 +13,5 @@ app.use(staticPlugin())
 app.use(cors())
 
 app.listen(config.mainAppPort, () => {
-  console.log('Listening on port 3000')
+  console.log('Listening on port ' + config.mainAppPort)
 });
