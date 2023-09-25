@@ -32,9 +32,24 @@ routes
         return 'Operational';
       })
 
-      .post('/chatgpt', async ({ body }) => {
-        console.log({body})
+      .post('/prompt', async ({ body }) => {
         const prompt = await PromptConstructor.generateV1(body.messagesArray, body.requestType, body.requestString);
+        return { result: prompt };
+      }, {
+        beforeHandle: accessMiddleware
+      })
+
+      .post('/chatgpt', async ({ body }) => {
+
+        console.log({body})
+
+        let prompt = '';
+        if (body.directPrompt) {
+          prompt = body.directPrompt;
+        } else {
+          prompt = await PromptConstructor.generateV1(body.messagesArray, body.requestType, body.requestString);
+        }
+        
         console.log({prompt})
         const result = await ChatGPTAPI.requestBase(prompt);
         console.log({result})

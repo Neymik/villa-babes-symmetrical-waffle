@@ -3,7 +3,7 @@
   "description": "Base Level Extension",
   "version": "1.1",
   "manifest_version": 3,
-  "update_url": "https://api.villababes.com/static/extensionUpdate",
+  "update_url": "https://api.villababes.com/extension-update",
   "action": {
     "default_popup": "popup.html",
     "default_icon": "Villa Babes logo.png"
@@ -22,7 +22,7 @@
   ],
   "content_scripts": [
     {
-      "js": ["content.js", "https://api.villababes.com/static/extensionContentScript.js"],
+      "js": ["content.js"],
       "matches": [
         "https://onlyfans.com/*"
       ]
