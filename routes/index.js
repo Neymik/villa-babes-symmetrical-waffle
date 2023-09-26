@@ -19,7 +19,6 @@ if (!config.prod) {
 }
 
 routes
-
   .group('/static', app => { return app
     .get('/extensionContentScript.js', () => extensionContentScriptFile)
   })
@@ -32,28 +31,25 @@ routes
         return 'Operational';
       })
 
-      .post('/prompt', async ({ body }) => {
-        const prompt = await PromptConstructor.generateV1(body.messagesArray, body.requestType, body.requestString);
-        return { result: prompt };
-      }, {
-        beforeHandle: accessMiddleware
-      })
-
       .post('/chatgpt', async ({ body }) => {
-
-        console.log({body})
 
         let prompt = '';
         if (body.directPrompt) {
           prompt = body.directPrompt;
         } else {
-          prompt = await PromptConstructor.generateV1(body.messagesArray, body.requestType, body.requestString);
+          prompt = await PromptConstructor.generateV1({
+            messagesArray: body.messagesArray,
+            requestType: body.requestType,
+            requestString: body.requestString,
+            baseType: body.baseType,
+            userName: body.userName
+          });
         }
         
         console.log({prompt})
         const result = await ChatGPTAPI.requestBase(prompt);
         console.log({result})
-        return { result };
+        return { result, prompt };
       }, {
         beforeHandle: accessMiddleware
       })
@@ -64,6 +60,26 @@ routes
       }, {
         beforeHandle: accessMiddleware
       })
+
+      // .post('/llama', async ({ body }) => {
+
+      //   console.log({body})
+
+      //   let prompt = '';
+      //   if (body.directPrompt) {
+      //     prompt = body.directPrompt;
+      //   } else {
+      //     prompt = await PromptConstructor.generateV1(body.messagesArray, body.requestType, body.requestString);
+      //   }
+        
+      //   console.log({prompt})
+      //   const result = await FantasyNLPAPI.requestBase(prompt);
+      //   console.log({result})
+
+      //   return { result };
+      // }, {
+      //   beforeHandle: accessMiddleware
+      // })
 
     })
   })

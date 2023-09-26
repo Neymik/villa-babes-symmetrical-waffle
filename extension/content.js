@@ -69,27 +69,73 @@ VB_emojisToRender = [
     description: 'Agree / Think So',
     value: '👍',
   },
-  {
-    type: 'questionIntresting',
-    description: 'Question + Wow / Intresting',
-    value: '❓',
-  },
-  {
-    type: 'understandTough',
-    description: 'Understand you it’s tough',
-    value: '🥺',
-  },
-  {
-    type: 'flirtyCutie',
-    description: 'Flirty / Cutie',
-    value: '😏',
-  },
+  // {
+  //   type: 'questionIntresting',
+  //   description: 'Question + Wow / Intresting',
+  //   value: '❓',
+  // },
+  // {
+  //   type: 'understandTough',
+  //   description: 'Understand you it’s tough',
+  //   value: '🥺',
+  // },
+  // {
+  //   type: 'flirtyCutie',
+  //   description: 'Flirty / Cutie',
+  //   value: '😏',
+  // },
 ]
 
 
 function VB_init () {
 
-  setInterval(regularWorker, 1000);
+  VB_context.chatBlock = document.querySelector('.m-chat-footer');
+
+  if (!VB_context.chatBlock) {
+    setTimeout(VB_init, 1000);
+    return
+  }
+
+  const chatHeader = document.querySelector('.b-chat__header');
+  if (chatHeader) {
+    VB_context.userName = chatHeader.querySelector('.g-user-realname')?.innerText;
+    if (!VB_context.userName) {
+      VB_context.userName = chatHeader.querySelector('.g-user-name')?.innerText;
+    }
+  }
+
+  const chatBlockHolder = VB_getElement({name: 'chatBlockHolder', type: 'div', context: VB_context.chatBlock, group: 'chatBlock'})
+  chatBlockHolder.classList.add('VB_chatBlockHolder');
+
+  const baseButtons = [
+    'Next',
+    'S1', 'S2', 'S3', 'S4', 'S5',
+    'C1', 'C2', 'C3', 'C4', 'C5'
+  ]
+
+  for (const baseButton of baseButtons) {
+    const button = VB_getElement({name: 'requestButton' + baseButton, type: 'button', context: chatBlockHolder, group: 'chatBlock',
+      onCreateCallback: (elem) => {
+        elem.innerHTML = `&nbsp; ${baseButton} &nbsp;`;
+      }
+    });
+    button.addEventListener('click', () => VB_llmRequestSend({
+      baseType: baseButton
+    }));
+  }
+
+  VB_getElement({name: 'requestOutput', type: 'input', context: VB_context.chatBlock, group: 'chatBlock',
+    onCreateCallback: (elem) => {
+      elem.setAttribute('placeholder', 'requestOutput');
+    }
+  });
+  VB_getElement({name: 'directPrompt', type: 'input', context: VB_context.chatBlock, group: 'chatBlock',
+    onCreateCallback: (elem) => {
+      elem.setAttribute('placeholder', 'directPrompt');
+    }
+  });
+
+  setInterval(regularWorker, 2000);
 
 }
 
@@ -132,12 +178,9 @@ function VB_getElement ({ name, type, context, group, onCreateCallback = (elem)=
   elem = document.getElementById(elemId);
 
   if (elem) {
-
-    if (elemBase[name] && elemBase[name] !== elem) {
+    if (elemBase[name]) {
       elemBase[name].remove();
     }
-    elemBase[name] = elem;
-    return elem
   }
 
   elem = document.createElement(type);
@@ -171,20 +214,23 @@ function VB_scrapMessages () {
 }
 
 
-async function VB_llmRequestSend ({messageText, emojiType}) {
-
-  console.log({messageText, emojiType})
+async function VB_llmRequestSend ({messageText, emojiType, baseType}) {
 
   const requestType = emojiType || 'default';
 
   const directPrompt = VB_context.chatBlock?.directPrompt?.value;
+  const userName = VB_context.userName;
 
   const requestBody = {
     messagesArray: VB_context.messages,
     requestString: messageText,
     requestType: requestType,
-    straightPrompt: directPrompt
+    directPrompt: directPrompt,
+    baseType: baseType,
+    userName: userName
   }
+
+  console.log(requestBody)
 
   const response = await fetch(VB_context.VB_REQUEST_URL, {
     method: "POST",
@@ -208,7 +254,7 @@ async function VB_llmRequestSend ({messageText, emojiType}) {
 
 function VB_rerenderEmojiReactions () {
 
-  // VB_removeElements('messagesBlock')
+  VB_removeElements('messagesBlock')
 
   const messagesNodes = document.querySelectorAll('.b-chat__message');
 
@@ -216,6 +262,11 @@ function VB_rerenderEmojiReactions () {
   for (const messagesNode of messagesNodes) {
     messageNo += 1;
     const messageTextNode = messagesNode.querySelector('.b-chat__message__body')
+
+    if (!messageTextNode) {
+      continue
+    }
+
     const emojiHolder = VB_getElement({name: 'emojiHolder' + messageNo, type: 'div', context: messageTextNode, group: 'messagesBlock'})
     emojiHolder.classList.add('VB_emojiHolder');
     // messageTextNode.appendChild(emojiHolder);
@@ -249,23 +300,22 @@ function VB_setupBaseInterface() {
     return
   }
 
-  const but1 = VB_getElement({name: 'requestButton', type: 'button', context: VB_context.chatBlock, group: 'chatBlock',
-    onCreateCallback: (elem) => {
-      elem.innerHTML = 'Next';
-      elem.addEventListener('click', VB_llmRequestSend);
-    }
-  });
-  console.log(but1)
-  VB_getElement({name: 'requestOutput', type: 'input', context: VB_context.chatBlock, group: 'chatBlock',
-    onCreateCallback: (elem) => {
-      elem.setAttribute('placeholder', 'requestOutput');
-    }
-  });
-  VB_getElement({name: 'directPrompt', type: 'input', context: VB_context.chatBlock, group: 'chatBlock',
-    onCreateCallback: (elem) => {
-      elem.setAttribute('placeholder', 'directPrompt');
-    }
-  });
+  // VB_getElement({name: 'requestButton', type: 'button', context: VB_context.chatBlock, group: 'chatBlock',
+  //   onCreateCallback: (elem) => {
+  //     elem.innerHTML = 'Next';
+  //     elem.addEventListener('click', VB_llmRequestSend);
+  //   }
+  // });
+  // VB_getElement({name: 'requestOutput', type: 'input', context: VB_context.chatBlock, group: 'chatBlock',
+  //   onCreateCallback: (elem) => {
+  //     elem.setAttribute('placeholder', 'requestOutput');
+  //   }
+  // });
+  // VB_getElement({name: 'directPrompt', type: 'input', context: VB_context.chatBlock, group: 'chatBlock',
+  //   onCreateCallback: (elem) => {
+  //     elem.setAttribute('placeholder', 'directPrompt');
+  //   }
+  // });
 
 }
 

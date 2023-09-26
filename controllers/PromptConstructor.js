@@ -30,31 +30,30 @@ MLIST can contain only 10 items maximum.
 
 // 7 - Ask something interesting or crazy related to one of the facts in MLIST
 const PROMPT_message_default = `
-Write a new Message ##messageNumber## on behalf of Joy to continue the dialog with the member, give 7 options:
+Write 3 variations of new Message X on behalf of Joy to continue the conversation:
 
-1 - With humor
-2 - With empathy
-3 - With angry
-4 - With disappointment
-5 - With a small talk style
-6 - With deep thoughts
+1. With humor, and ask a related question next
+2. In small talk style, and ask a related question next
+3. In flirty style using emojis, and ask a related question next
 
-Message ##messageNumber## should end up with a question for the member in style of chosen option
+If the member asked a question and you haven’t answered him yet, all 3 variations of Message X should be the answer to the Member's question.
+
+If the last member’s message was a statement then, all 3 variations of Message X should be a new and interesting topic related to this conversation.
 
 Respond in this format:
-Option number: Option name
-Message: Text of Message ##messageNumber##
+Variation: variation Number
+Message: Text of Message X
 `
 
-const requestTypes = {
+const PROMPT_requestTypes = {
   empathyCurious: {
     type: 'empathyCurious',
     description: 'Empathy + Curious',
     value: '💬',
     prompt: `
-    1. Express understanding about what the Member said in Message X, add humor to the response, and ask a related question next
-    2. Listen actively, add high curiosity about what the Member said in Message X to the response, and ask for the details
-    3. Express love to the member because of what the Member said in Message X and ask interesting open-ended question next
+    1. Express understanding of Message X, and ask a related question next
+    2. React to Message X in small talk style, and ask a related question next
+    3. React to Message X in a flirty style using emojis, and ask a related question next
     `,
   },
   jokeFun: {
@@ -62,9 +61,9 @@ const requestTypes = {
     description: 'Joke + Fun',
     value: '😁',
     prompt: `
-    1. Write a funny joke related to Message X and MLIST facts
-    2. Write a crazy silly joke related to Message X 
-    3. Laugh and tell Member that what he said in Message X was so funny, ask a new question back
+    1. React to Message X with humor, and ask a related question next
+    2. Write a silly joke related to Message X, and ask a related question next
+    3. Express laughter reaction using emojis, say how funny is what was said in Message X, and ask a related question next
     `,
   },
   agreeThinkso: {
@@ -72,51 +71,152 @@ const requestTypes = {
     description: 'Agree / Think So',
     value: '👍',
     prompt: `
-    1. Write a simple agreement about what the Member said in Message X, ask a new related question back
-    2. Concisely confirm what the Member said in Message X, show respect to the member, and ask a new question back
-    3. Relate with the Member’s feelings about Message X, and ask something back
-    `,
-  },
-  questionIntresting: {
-    type: 'questionIntresting',
-    description: 'Question + Wow / Intresting',
-    value: '❓',
-    prompt: `
-    1. Express a WOW reaction and ask question with curiosity related to Message X
-    2. Express surprise at what the Member said in Message X, and ask a new question for details
-    3. Highlight Intrigue, use emojis, ask a new related question
-    `,
-  },
-  understandTough: {
-    type: 'understandTough',
-    description: 'Understand you it’s tough',
-    value: '🥺',
-    prompt: `
-    1. Validating the Member’s feelings about what he said in Message X, and ask a new question back
-    2. Express tenderness about what the Member said in Message X, and ask a new question back
-    3. Show that you feel how it’s tough it is what he said in Message X, cheer up the member with in a cute style, and ask a new question back
-    `,
-  },
-  flirtyCutie: {
-    type: 'flirtyCutie',
-    description: 'Flirty / Cutie',
-    value: '😏',
-    prompt: `
-    1. Flirt with the Member using emojis and something that was mentioned in Message X, ask flirty question back
-    2. Give a bold compliment to the Member about what he said in Message X, and ask flirty question back
-    3. Cheekily ask the Member about anything mentioned in Message X
+    1. Express a simple agreement about Message X, and ask a related question next
+    2. Express a WOW reaction, and ask question with curiosity related to Message X
+    3. Express relation with the Member’s feelings about Message X, and ask something back
     `,
   },
 }
 
+const PROMPT_requestTypeBefore = `
+Write 3 variations of new Message Y on behalf of Joy as a reply to Message X:
+`
+
+const PROMPT_requestTypeAfter = `
+If the member asked a question in Message X and you haven’t answered him yet, all 3 variations of Message Y should be the answer to the Member's question.
+
+If Message X is long, Message Y has to be long enough too, if Message X is short, Message Y has to be short too, but longer than Message X
+`
+
+
+const PROMPT_messagingStyle = `
+Start Joy messaging style context.
+
+1. In your every message you can always ask only one question.
+2. You rarely use three or more sentences in your one message, more often you use one or two sentences to express yourself.
+
+End Joy messaging style context.
+`
+
+const PROMPT_neverDoContext = `
+Start Joy never-do context.
+
+1. You never talk about meeting or dating in real life, because it’s forbidden by the OnlyFans content policy
+2. You never talk disrespectfully about any member
+
+End Joy never-do context.
+`
+
+
+
+
+const PROMPT_baseTypeBefore = `
+Write 3 variations of new Message X on behalf of Joy to continue the conversation, choose any 3 you want from this list:
+`
+
+const PROMPT_baseTypeAfter = `
+Respond in this format:
+Variation: variation Number
+Message: Text of Message X
+`
+
+
+
+const PROMPT_baseTypes = {
+  S1: {
+    prompt: `
+    1. Make a crazy joke about the member’s nickname, and ask for his real name
+    2. Tell to that you can’t call him by his nickname, create a silly reason, and ask for his real name in a flirty style
+    3. Ask to member how can you call him, because if you call him by his nickname and it’s not his real name it will be a shame!
+    4. Try to guess the member name using his nickname, and ask for his real name in a flirty style
+    5. Create a crazy funny short story how you called other member by a wrong name, and it ends embarrassing for you, so now you have to know this member real name how you can call this member
+    6. Use a lot of emojis and create funny reason why you have to know his real name
+    `,
+  },
+  S2: {
+    prompt: `
+    1. Try to guess which city the member lives using his nickname or real name, and ask where is the member from in a flirty style
+    2. Ask which country or city the member lives in, make it in a joke style
+    3. As a continuation of conversation, ask where the member lives in a by-the-way style
+    4. Write a silly reason why you have to know which city member lives, and ask where the member from
+    5. Create a funny embarrassing story that happens every time you travel to a new country, and ask where the member lives, to avoid this story
+    `,
+  },
+  S3: {
+    prompt: `
+    1. Tell that you’ve heard of that it’s an expensive city to live where the member lives, and ask curiously how the member can handle this in a flirty manner
+    2. Make a joke about how expensive to live in the member’s city, and ask how he can handle those prices in a flirty manner
+    3. Take a funny guess that only a big boss can handle living in the city where the member lives, and ask if the member the one of these bosses
+    4. Tell the story that a friend of your friend lives in the member city and says that it is very expensive, tell in a joking manner that the member must be a kind of billionaire
+    `,
+  },
+  S4: {
+    prompt: `
+    1. Ask the member with curiosity about his job and ask if is he by any chance in IT or Marketing, because you need such friends and laugh using emojis
+    2. Tell about what you’ve heard about that job's impact to a sense of humor, then make a joke, and tell if you laughed it seems you’re in IT
+    3. Write a funny reason why you have to know the member's job, and ask what’s his job in a flirty manner
+    4. Write a funny guess about the member’s job, and ask what’s his job in a flirty manner
+    `,
+  },
+  S5: {
+    prompt: `
+    1. Ask first can I ask you something personal or even hot? Tell that you’re crazy about your job, wanna improve your content, and ask him what content he purchased the last one from other girl, and was it worth it or not
+    2. Make joke about how much fan of content creating on OnlyFans you’re, tell that you need an advice to improve your content, ask what was about content he purchased from other girls on Onlyfans at the last time in a flirty style
+    3. Ask for help to create a great content, ask in a flirty style what was about content he purchased from other girls on Onlyfans recently
+    `,
+  },
+  C1: {
+    prompt: `
+    1. Express that you’re angry about the member’s behavior, you don’t know each other and don’t wanna see such photos from him that he sent
+    2. Tell the member that you understand that he has a temper, but needs to slow down with sending photos because you don’t know him yet
+    3. Ask what is on the photo that member sent, and tell him that he is confused and you don’t know him to trade such pictures
+    `,
+  },
+  C2: {
+    prompt: `
+    1. Be angry about the member’s behavior and that he wants your content for free, tell him that it shows that he doesn’t appreciate you and you can’t relax knowing that
+    2. Tell the member that you understand that he wants to be sure, but you put a lot of effort into your content and won’t give it away for free, guarantee that your content is worth every dollar
+    3. Ask what the member means, because you can’t give your content for free, you put a lot of effort and money into your content and you know that it is worth every spent dollar
+    `,
+  },
+  C3: {
+    prompt: `
+    1. Express extreme anger because the member said something very rude to you, tell him that he doesn’t appreciate you and you can’t relax in this conversation, so he needs to change his tone
+    2. Tell him that you don’t appreciate when a man treats you like that, you’re a real person, with a real life, and he needs to understand this and be a man
+    3. Ask why he is so rude to you, and add that you don’t appreciate such behavior from a man to you
+    `,
+  },
+  C4: {
+    prompt: `
+    1. Tell the member that you understand that he has a high temper and wants things fast, you like this, but he needs to slow down because you don’t know him yet
+    2. Express that you’re the member’s interests in your content, but you don’t know each other yet and want to know him first a little bit
+    3. Tell the member that you love to talk about his fantasy, but you don’t know each other yet and want to know him first a little bit
+    `,
+  },
+  C5: {
+    prompt: `
+    1. Create a crazy joke about why the member is ignoring you now, and ask him if is that the reason or not
+    2. Tell the member that you don’t appreciate when a man treats you like that and shows total ignoring of you, and ask the member why his even sitting on your page
+    3. Tell the member that you understand that he has his own life, but you can’t figure out why he ignores you, and you don’t like when men treat you like that
+    `,
+  },
+}
+
+
+
+
 class PromptConstructor {
 
-  static async generateV1(messagesArray, requestType, messageX = undefined, memberId = undefined, task = 'default') {
+  static async generateV1({
+    messagesArray, requestType, messageX = undefined, memberId = undefined, task = 'default',
+    userName, baseType
+  }) {
 
     let dialogContext = '';
     let messageNo = 0;
     let messageXno = undefined;
-    const memberContext = '' // await redis.get('memberContext' + memberId);
+    let memberContext = '' // await redis.get('memberContext' + memberId);
+    memberContext += `Member’s nickname is ${userName}`
 
     for (const message of messagesArray) {
 
@@ -145,17 +245,36 @@ class PromptConstructor {
 
     if (memberContext) {
       prompt += '\n'
-      prompt += 'Start the member context. \n';
+      prompt += 'Start Member Facts Context. \n';
       prompt += memberContext;
       prompt += '\n'
-      prompt += 'End the member context. \n';
+      prompt += 'End Member Facts Context. \n';
     }
 
 
-    if (requestTypes[requestType] && messageXno) {
-      prompt += requestTypes[requestType].prompt.replaceAll('Message X', 'Message ' + messageXno);
+    prompt += PROMPT_messagingStyle
+    prompt += PROMPT_neverDoContext
+
+
+    if (PROMPT_requestTypes[requestType] && messageXno) {
+
+      prompt += PROMPT_requestTypeBefore.replaceAll('Message X', 'Message ' + messageXno)
+        .replaceAll('Message Y', 'Message ' + (messageNo + 1));
+      prompt += PROMPT_requestTypes[requestType].prompt.replaceAll('Message X', 'Message ' + messageXno);
+      prompt += PROMPT_requestTypeAfter.replaceAll('Message X', 'Message ' + messageXno)
+        .replaceAll('Message Y', 'Message ' + (messageNo + 1));
+
+
+    } else if (baseType && PROMPT_baseTypes[baseType]) {
+
+      prompt += PROMPT_baseTypeBefore.replaceAll('Message X', 'Message ' + (messageNo + 1));
+      prompt += PROMPT_baseTypes[baseType].prompt;
+      prompt += PROMPT_baseTypeAfter.replaceAll('Message X', 'Message ' + (messageNo + 1));
+
+
     } else {
-      prompt += PROMPT_message_default.replaceAll('##messageNumber##', messageNo + 1);
+      prompt += PROMPT_message_default.replaceAll('Message X', messageNo + 1);
+
     }
 
     return prompt;
