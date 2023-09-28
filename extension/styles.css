@@ -1,0 +1,63 @@
+
+.VB_emojiButton {
+  margin: 2px
+}
+
+.VB_requestButton {
+  margin: 2px;
+  border: 2px solid #920088;
+}
+
+.VB_openModalButton {
+  z-index: 1;
+  position: fixed;
+  margin: 2px;
+  border: 2px solid #920088;
+}
+
+
+.VB_modal {
+  position: absolute;
+  z-index: 1000;
+  left: 0%;
+  top: 6%;
+  width: 40%;
+  height: 85%;
+  overflow: auto;
+  /* border: 2px solid #920088; */
+  background: rgba(240,240,240,0.90);
+}
+
+.VB_inputModal {
+  margin: 10px;
+  padding: 10px;
+  outline: 1px solid rgb(165, 165, 165);
+  overflow: visible;
+  border: 0;
+  outline-offset: -8px;
+  width: 90%;
+}
+
+.VB_modalButton {
+  border: 2px solid #920088;
+  margin: 10px;
+  padding: 10px;
+  outline: 1px solid rgb(165, 165, 165);
+  overflow: visible;
+}
+
+.VB_modalButtonAccent {
+  border: 4px solid #db00cd;
+  margin: 10px 10px 10px 50px;
+  padding: 10px;
+  outline: 1px solid rgb(165, 165, 165);
+  overflow: visible;
+}
+
+.VB_modalButtonClose {
+  border: 2px solid #000000;
+  margin: 10px;
+  padding: 10px;
+  outline: 1px solid rgb(165, 165, 165);
+  overflow: visible;
+}

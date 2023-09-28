@@ -1,12 +1,12 @@
 {
   "name": "Villa Babes",
-  "description": "Base Level Extension",
-  "version": "1.1",
+  "description": "Seller Assistant",
+  "version": "1.2",
   "manifest_version": 3,
   "update_url": "https://api.villababes.com/extension-update",
   "action": {
     "default_popup": "popup.html",
-    "default_icon": "Villa Babes logo.png"
+    "default_icon": "images/villa-babes-logo.png"
   },
   "permissions": [
     "tabs",
@@ -22,10 +22,19 @@
   ],
   "content_scripts": [
     {
-      "js": ["content.js"],
+      "js": [
+        "scripts/miscellaneous.js",
+        "scripts/content.js",
+        "scripts/devToolModal.js"
+      ],
+      "css": ["styles.css"],
       "matches": [
         "https://onlyfans.com/*"
       ]
     }
-  ]
+  ],
+  "web_accessible_resources": [{
+    "matches": ["https://onlyfans.com/*"],
+    "resources": ["images/villa-babes-logo.png"]
+}]
 }

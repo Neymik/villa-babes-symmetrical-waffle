@@ -37,9 +37,9 @@ routes
         if (body.directPrompt) {
           prompt = body.directPrompt;
         } else {
-          prompt = await PromptConstructor.generateV1({
+          prompt = await PromptConstructor.generate({
             messagesArray: body.messagesArray,
-            requestType: body.requestType,
+            promptTaskType: body.promptTaskType,
             requestString: body.requestString,
             baseType: body.baseType,
             userName: body.userName
@@ -54,32 +54,13 @@ routes
         beforeHandle: accessMiddleware
       })
 
-      .post('/fantasy', async ({ body }) => {
-        const result = await FantasyNLPAPI.requestBase(body.requestString);
-        return { result };
+
+      .post('/llama', async ({ body }) => {
+        console.log({body})
+        return 'llama is offline D:'
       }, {
         beforeHandle: accessMiddleware
       })
-
-      // .post('/llama', async ({ body }) => {
-
-      //   console.log({body})
-
-      //   let prompt = '';
-      //   if (body.directPrompt) {
-      //     prompt = body.directPrompt;
-      //   } else {
-      //     prompt = await PromptConstructor.generateV1(body.messagesArray, body.requestType, body.requestString);
-      //   }
-        
-      //   console.log({prompt})
-      //   const result = await FantasyNLPAPI.requestBase(prompt);
-      //   console.log({result})
-
-      //   return { result };
-      // }, {
-      //   beforeHandle: accessMiddleware
-      // })
 
     })
   })

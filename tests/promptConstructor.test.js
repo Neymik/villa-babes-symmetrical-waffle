@@ -2,7 +2,7 @@
 import { expect, test } from "bun:test";
 const PromptConstructor = require("../controllers/PromptConstructor.js");
 
-test("PromptConstructor", () => {
+test("promptConstructor", async () => {
 
   const messagesArray = [
     {
@@ -15,11 +15,12 @@ test("PromptConstructor", () => {
     },
   ];
 
-  const creatorContext = 'creatorContext';
+  const messageXText = 'text2';
   const memberId = 1;
-  const task = 'task';
+  const promptTaskType = 'agreeThinkso';
+  const userName = 'userName';
 
-  const prompt = PromptConstructor.constructorMain(messagesArray, creatorContext, memberId, task);
+  const prompt = await PromptConstructor.generate({messagesArray, messageXText, promptTaskType, userName, memberId});
 
   console.log(prompt) 
 
