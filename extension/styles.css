@@ -31,6 +31,7 @@
 .VB_inputModal {
   margin: 10px;
   padding: 10px;
+  border: 2px solid #920088;
   outline: 1px solid rgb(165, 165, 165);
   overflow: visible;
   border: 0;

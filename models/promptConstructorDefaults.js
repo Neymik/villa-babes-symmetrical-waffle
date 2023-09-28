@@ -43,19 +43,19 @@ module.exports = {
   // `,
 
   taskDefault: `
-  Write 3 variations of new {{Message X}} on behalf of {{creatorNameShort}} to continue the conversation:
+  Write 3 variations of new {{Message Next}} on behalf of {{creatorNameShort}} to continue the conversation:
 
   1. With humor, and ask a related question next
   2. In small talk style, and ask a related question next
   3. In flirty style using emojis, and ask a related question next
 
-  If the member asked a question and you haven’t answered him yet, all 3 variations of {{Message X}} should be the answer to the Member's question.
+  If the member asked a question and you haven’t answered him yet, all 3 variations of {{Message Next}} should be the answer to the Member's question.
 
-  If the last member’s message was a statement then, all 3 variations of {{Message X}} should be a new and interesting topic related to this conversation.
+  If the last member’s message was a statement then, all 3 variations of {{Message Next}} should be a new and interesting topic related to this conversation.
 
   Respond in this format:
   Variation: variation Number
-  Message: Text of {{Message X}}
+  Message: Text of {{Message Next}}
   `,
 
   messagingStyle: `
@@ -77,13 +77,13 @@ module.exports = {
   `,
 
   promptTask_before: `
-  Write 3 variations of new {{Message X}} on behalf of {{creatorNameShort}} to continue the conversation, choose any 3 you want from this list:
+  Write 3 variations of new {{Message Next}} on behalf of {{creatorNameShort}} to continue the conversation, choose any 3 you want from this list:
   `,
 
   promptTask_after: `
   Respond in this format:
   Variation: variation Number
-  Message: Text of {{Message X}}
+  Message: Text of {{Message Next}}
   `,
 
   reactionType_before: `

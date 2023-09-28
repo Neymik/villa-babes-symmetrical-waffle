@@ -53,9 +53,20 @@ function VB_openDevTool () {
     input.classList.add('VB_inputModal');
     input.setAttribute('type', 'text');
     input.setAttribute('placeholder', inputKey);
+
+    input.addEventListener('input', (value) => {
+      window.VB_context['modalInputValue_' + inputKey] = value.target.value;
+    });
+
+    if (window.VB_context['modalInputValue_' + inputKey]) {
+      input.value = window.VB_context['modalInputValue_' + inputKey];
+    }
+
     modalInputs[inputKey] = input;
   }
 
+  const modalDuration = VB_getElement({name: 'modalDuration', type: 'div', context: modal, group: 'devToolModal'});
+  modalDuration.innerHTML = 'Duration: ' + window.VB_context.lastResponseDuration + 'ms';
 
   const modalButtons = VB_getElement({name: 'modalButtons', type: 'div', context: modal, group: 'devToolModal'});
 
@@ -75,7 +86,9 @@ function VB_openDevTool () {
   const modalButtonReset = VB_getElement({name: 'modalButtonReset', type: 'button', context: modalButtons, group: 'devToolModal'});
   modalButtonReset.classList.add('VB_modalButton');
   modalButtonReset.innerHTML = 'Reset';
-  modalButtonReset.addEventListener('click', () => VB_llmRequestSend());
+  modalButtonReset.addEventListener('click', () => VB_llmRequestSend({
+    promptOnly: true,
+  }));
 
 
   const modalButtonGenerate = VB_getElement({name: 'modalButtonGenerate', type: 'button', context: modalButtons, group: 'devToolModal'});

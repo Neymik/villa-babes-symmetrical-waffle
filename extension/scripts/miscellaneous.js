@@ -72,7 +72,9 @@ function VB_getElement ({ name, type, context, group, onCreateCallback = (elem)=
   return elem
 }
 
-async function VB_llmRequestSend ({messageText, emojiType, baseType, directPrompt}) {
+async function VB_llmRequestSend ({messageText, emojiType, baseType, directPrompt, promptOnly}) {
+
+  const startDate = new Date();
 
   const promptTaskType = emojiType || baseType || 'default';
   const userName = VB_context.userName;
@@ -82,22 +84,29 @@ async function VB_llmRequestSend ({messageText, emojiType, baseType, directPromp
     requestString: messageText,
     promptTaskType: promptTaskType,
     directPrompt: directPrompt,
-    userName: userName
+    userName: userName,
+    promptOnly
   }
 
   console.log(requestBody)
+  let responseData = {}
 
-  const response = await fetch(VB_context.VB_REQUEST_URL, {
-    method: "POST",
-    cors: "no-cors",
-    headers: {
-      "Content-Type": "application/json",
-      "x-access-token": VB_context.VB_ACCESS_TOKEN,
-    },
-    body: JSON.stringify(requestBody),
-  });
-
-  responseData = await response.json();
+  try {
+    const response = await fetch(VB_context.VB_REQUEST_URL, {
+      method: "POST",
+      cors: "no-cors",
+      headers: {
+        "Content-Type": "application/json",
+        "x-access-token": VB_context.VB_ACCESS_TOKEN,
+      },
+      body: JSON.stringify(requestBody),
+    });
+  
+    responseData = await response.json();
+  } catch (error) {
+    console.log({error})
+    return
+  }
 
   console.log(responseData)
 
@@ -109,6 +118,18 @@ async function VB_llmRequestSend ({messageText, emojiType, baseType, directPromp
   }
 
   // VB_context.chatBlock?.requestOutput?.value = responseData.result;  
+
+
+  const endDate = new Date();
+  const duration = endDate - startDate;
+
+  window.VB_context.lastResponseDuration = duration;
+
+  if (VB_context.devToolModal?.modalDuration) {
+    VB_context.devToolModal.modalDuration.innerHTML = 'Duration: ' + window.VB_context.lastResponseDuration + 'ms';;
+  }
+
+  console.log({startDate, endDate, duration})
 
   return responseData
 

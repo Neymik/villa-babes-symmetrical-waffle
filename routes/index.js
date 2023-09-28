@@ -45,8 +45,14 @@ routes
             userName: body.userName
           });
         }
-        
+
+        promptOnly = body.promptOnly;
         console.log({prompt})
+
+        if (promptOnly) {
+          return { prompt };
+        }
+        
         const result = await ChatGPTAPI.requestBase(prompt);
         console.log({result})
         return { result, prompt };
