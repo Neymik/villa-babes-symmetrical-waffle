@@ -1,6 +1,6 @@
 
-const OpenAI = require('openai');
-const config = require('../config');
+import OpenAI from 'openai';
+import config from '../config/index.js';
 
 const openai = new OpenAI({
   apiKey: config.openaiSecret
@@ -28,4 +28,4 @@ class ChatGPTAPI {
 
 }
 
-module.exports = ChatGPTAPI;
+export default ChatGPTAPI;

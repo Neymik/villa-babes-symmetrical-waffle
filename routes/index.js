@@ -1,74 +1,65 @@
 
-const { Elysia } = require('elysia')
+import ChatGPTAPI from '../controllers/ChatGPTAPI.js';
+import FantasyNLPAPI from '../controllers/AccessControl.js';
+import PromptConstructor from '../controllers/PromptConstructor.js';
 
-const config = require('../config')
+import fastifyMiddie from '@fastify/middie';
+import { accessMiddleware } from '../middlewares/accessMiddleware.js';
+import { debugV0 } from '../middlewares/debugMiddleware.js';
 
-const ChatGPTAPI = require('../controllers/ChatGPTAPI.js');
-const FantasyNLPAPI = require('../controllers/AccessControl.js');
-const PromptConstructor = require('../controllers/PromptConstructor.js');
+import sql from '../models/pgGeneral.js';
 
-const { accessMiddleware } = require('../middlewares/accessMiddleware.js');
-const { debugV0 } = require('../middlewares/debugMiddleware.js');
+export async function applyRoutes(fastify) {
 
-const extensionContentScriptFile = Bun.file('./static/extensionContentScript.js') // paths ??? from root
+  await fastify.register(fastifyMiddie);
+  
+  // signature check
+  fastify.use(accessMiddleware);
 
-const routes = new Elysia()
+  fastify.get('/', async (request, reply) => {
+    return { result: 'Operational' }
+  });
 
-if (!config.prod) {
-  routes.on('request', debugV0)
+  fastify.get('/prompts', async (request, reply) => {
+
+    const data = await sql`
+      SELECT * FROM public."promptsBase" AS promptsBase
+      WHERE promptsBase."active" = true
+      AND promptsBase."renderType" IS NOT NULL
+    `;
+    return data; 
+
+  });
+
+  fastify.post('/promptRequestBase', async (request, reply) => {
+
+    const body = request.body;
+    let prompt = '';
+    if (body.directPrompt) {
+      prompt = body.directPrompt;
+    } else {
+      prompt = await PromptConstructor.generate({
+        messagesArray: body.messagesArray,
+        promptTaskType: body.promptTaskType,
+        requestString: body.requestString,
+        messageXno: body.messageXno,
+        baseType: body.baseType,
+        userName: body.userName
+      });
+    }
+
+    const promptOnly = body.promptOnly;
+    console.log({prompt})
+
+    if (promptOnly) {
+      return { prompt };
+    }
+    
+    const result = await ChatGPTAPI.requestBase(prompt);
+    console.log({result})
+    return { result, prompt };
+
+  });
+
+  return fastify;
 }
-
-routes
-  .group('/static', app => { return app
-    .get('/extensionContentScript.js', () => extensionContentScriptFile)
-  })
-
-  .group('/api', app => { return app
-    .group('/v0', app => { return app
-      // .on('request', accessMiddlewareV0)
-
-      .get('/', () => {
-        return 'Operational';
-      })
-
-      .post('/chatgpt', async ({ body }) => {
-
-        let prompt = '';
-        if (body.directPrompt) {
-          prompt = body.directPrompt;
-        } else {
-          prompt = await PromptConstructor.generate({
-            messagesArray: body.messagesArray,
-            promptTaskType: body.promptTaskType,
-            requestString: body.requestString,
-            baseType: body.baseType,
-            userName: body.userName
-          });
-        }
-
-        promptOnly = body.promptOnly;
-        console.log({prompt})
-
-        if (promptOnly) {
-          return { prompt };
-        }
-        
-        const result = await ChatGPTAPI.requestBase(prompt);
-        console.log({result})
-        return { result, prompt };
-      }, {
-        beforeHandle: accessMiddleware
-      })
-
-
-      .post('/llama', async ({ body }) => {
-        console.log({body})
-        return 'llama is offline D:'
-      }, {
-        beforeHandle: accessMiddleware
-      })
-
-    })
-  })
-
-module.exports = routes

@@ -20,13 +20,27 @@
   position: absolute;
   z-index: 1000;
   left: 0%;
-  top: 6%;
+  top: 0%;
   width: 40%;
-  height: 85%;
+  height: 100%;
   overflow: auto;
   /* border: 2px solid #920088; */
   background: rgba(240,240,240,0.90);
 }
+
+.VB_modalResult {
+  position: absolute;
+  z-index: 1000;
+  left: 40%;
+  top: 0%;
+  width: 40%;
+  height: 50%;
+  overflow: auto;
+  /* border: 2px solid #920088; */
+  background: rgba(240,240,240,0.90);
+}
+
+
 
 .VB_inputModal {
   margin: 10px;
@@ -37,6 +51,7 @@
   border: 0;
   outline-offset: -8px;
   width: 90%;
+  height: 80%;
 }
 
 .VB_modalButton {
@@ -61,4 +76,9 @@
   padding: 10px;
   outline: 1px solid rgb(165, 165, 165);
   overflow: visible;
+}
+
+.VB_disabled {
+  background: rgb(200,200,200);
+  opacity: 0.5;
 }

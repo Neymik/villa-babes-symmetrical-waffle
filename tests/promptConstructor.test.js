@@ -1,8 +1,7 @@
 
-import { expect, test } from "bun:test";
-const PromptConstructor = require("../controllers/PromptConstructor.js");
+import PromptConstructor from "../controllers/PromptConstructor.js";
 
-test("promptConstructor", async () => {
+(async () => {
 
   const messagesArray = [
     {
@@ -24,4 +23,4 @@ test("promptConstructor", async () => {
 
   console.log(prompt) 
 
-});
+})()

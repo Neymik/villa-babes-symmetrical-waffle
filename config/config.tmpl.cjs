@@ -7,11 +7,15 @@ module.exports = {
   openaiSecret: 'secret',
   fantasyNLPAPISecret: 'secret',
   redisSecret: 'v0RedisSecret',
+  pgSecret: 'root',
 
   openaiGPTmodel: 'gpt-3.5-turbo', // gpt-4
 
   redisHost: '127.0.0.1',
   redisPort: 6379,
+
+  pgUser: 'root',
+  pgDB: 'postgres',
 
 
   v01SecuritySecrets: [

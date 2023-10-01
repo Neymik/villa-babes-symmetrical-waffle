@@ -1,15 +1,15 @@
 
-const config = require('../config');
-const redis = require('../models/redisGeneral.js');
+import config from '../config/index.js';
+import redis from '../models/redisGeneral.js';
 
-const PromptConstructorModel = require('../models/promptConstructorModel.js');
+import PromptConstructorModel from '../models/promptConstructorModel.js';
 
 
 class PromptConstructor {
 
   static async generate({
     messagesArray, messageXText = undefined, promptTaskType = 'default', userName,
-    memberId = undefined,
+    memberId = undefined, messageXno = 0
   }) {
 
     const promptConstructorModel = new PromptConstructorModel({
@@ -17,83 +17,43 @@ class PromptConstructor {
       memberId,
     })
 
-    const template = await promptConstructorModel.get('Template');
     const specials = await promptConstructorModel.get('Specials');
 
     let prompt = '';
-
     let messageNo = 0;
-    let messageXno = 0;
     let dialogContext = '';
     const creatorName = await promptConstructorModel.get('creatorName');
     for (const message of messagesArray) {
 
       const sender = message.sender == 'Creator' ? creatorName : 'Member';
-      
-      messageNo += 1;
+      messageNo = message.messageNo;
+
       dialogContext += '\n'
       dialogContext += 'Message ' + messageNo + '\n';
       dialogContext += 'Sender: ' + sender + '\n';
       dialogContext += 'Text: ' + message.text + '\n';
 
-      if (messageXText == message.text) {
-        messageXno = messageNo;
-      }
     }
 
-    promptConstructorModel.addContext('Message X', 'Message ' + messageXno);
+    promptConstructorModel.addContext('Message X', 'Message ' + messageXno || messageNo);
     promptConstructorModel.addContext('Message Next', 'Message ' + (messageNo + 1));
-    promptConstructorModel.addContext('Message Last', 'Message ' + (messageXno + 1));
+    promptConstructorModel.addContext('Message Last', 'Message ' + (messageNo));
 
-    dialogContext = `
-      Start the dialog context.
-      ${dialogContext}
-      End the dialog context.
-    `
+    dialogContext = `Start the dialog context.\n${dialogContext}\nEnd the dialog context.`
     promptConstructorModel.addContext('dialogContext', dialogContext);
 
-    let memberContext = `Member’s nickname is ${userName}`; // TODO get from db
-    memberContext = `
-      Start Member Facts Context.
-      ${memberContext}
-      End Member Facts Context.
-    `
-    promptConstructorModel.addContext('memberContext', memberContext);
 
-    
-
-
-    const promptTasks = await promptConstructorModel.get('promptTasks');
-    let promptTask = '';
-
-    if (promptTasks[promptTaskType]) {
-
-      if (messageXno) { // reaction
-        promptTask = '' +
-          await promptConstructorModel.get('reactionType_before') +
-          promptTasks[promptTaskType].prompt +
-          await promptConstructorModel.get('reactionType_after')
-      } else {
-        promptTask = '' +
-          await promptConstructorModel.get('promptTask_before') +
-          promptTasks[promptTaskType].prompt +
-          await promptConstructorModel.get('promptTask_after')
-      }
-
-    } else {
-      promptTask = await promptConstructorModel.get('taskDefault')
-
+    let promptTask = await promptConstructorModel.get(promptTaskType);
+    if (!promptTask) {
+      promptTask = await promptConstructorModel.get('promptTask_default')
     }
-
-    promptConstructorModel.addContext('promptTask', promptTask);
-
 
 
     // regex find and replace between specials
     const regex = new RegExp(`${specials.join('(.*?)')}`, 'g');
 
     const setupIterations = 3;
-    prompt += template;
+    prompt += promptTask;
     for (let i = 1; i <= setupIterations; i++) {
       const matches = prompt.match(regex);
       if (!matches) {
@@ -118,4 +78,4 @@ class PromptConstructor {
 
 }
 
-module.exports = PromptConstructor;
+export default PromptConstructor;

@@ -4,12 +4,13 @@ module.exports = {
     {
       name: 'APIbuf',
       script: 'app.js',
-      watch: false,
+      watch: true,
       wait_ready: true,
-      instances: 2,
-      kill_timeout: 60000,
+      instances: 1,
+      autorestart: false,
       env: {
-        NODE_ENV: 'production',
+        NODE_ENV: 'development',
+        NODE_PATH: './'
       }
     }
   ]

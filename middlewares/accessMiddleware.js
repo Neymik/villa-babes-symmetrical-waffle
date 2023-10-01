@@ -1,20 +1,19 @@
 
-const AccessControl = require('../controllers/AccessControl.js');
+import AccessControl from '../controllers/AccessControl.js';
 
-function accessMiddleware({ request, set }) {
+export function accessMiddleware(request, replyRaw, next) {
 
-  const accessData = AccessControl.v01CheckAccess(request.headers.get('x-access-token'))
+  const accessData = AccessControl.v01CheckAccess(request.headers['x-access-token'])
 
   if (accessData) {
     request.accessData = accessData;
   }
 
   if (!accessData) {
-    set.status = 403;
-    return 'Access denied';
+    replyRaw.statusCode = 403;
+    return replyRaw.end();
   }
+
+  return next();
 };
 
-module.exports = {
-  accessMiddleware
-}

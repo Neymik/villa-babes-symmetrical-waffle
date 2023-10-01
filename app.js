@@ -1,15 +1,40 @@
 
-import { cors } from '@elysiajs/cors'
+import Fastify from 'fastify'
+import cors from '@fastify/cors'
 
-const { Elysia } = require('elysia')
-const routes = require('./routes')
-const config = require('./config')
+import { applyRoutes } from './routes/index.js'
+import config from './config/index.js'
+import sql from './models/pgGeneral.js'
 
-const app = new Elysia()
+const fastify = Fastify({
+  logger: process.env.NODE_ENV === 'development' ? true : false,
+})
 
-app.use(routes)
-app.use(cors())
+fastify.register(cors, {});
 
-app.listen(config.mainAppPort, () => {
-  console.log('Listening on port ' + config.mainAppPort)
+const start = async () => {
+  try {
+    await applyRoutes(fastify);
+    await fastify.listen({ port: config.mainAppPort });
+    console.log('Server started on port', config.mainAppPort);
+    if (process.send) {
+      process.send('ready');
+    }
+  } catch (err) {
+    console.error(err);
+    process.exit(1);
+  }
+};
+
+process.on('SIGINT', async () => {
+  await sql.close();
+  setTimeout(() => {
+    console.log("Forced exit");
+    process.exit(0);
+  }, 10000);
+
+  process.exit(0);
 });
+
+
+start();

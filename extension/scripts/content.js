@@ -1,40 +1,46 @@
 
-VB_context = {
-  VB_REQUEST_URL: 'https://api.villababes.com/api/v0/chatgpt', // 'http://localhost:3001/api/v0/chatgpt', https://api.villababes.com/api/v0/chatgpt
-  VB_ACCESS_TOKEN: 'sellerSecret1'
+try {
+  devMode = localStorage.getItem('devMode') == 'true' ? true : false;
+} catch (error) {
+  devMode = false;
+}
+
+VB_context = {}
+VB_context.VB_BASE_URL = devMode ? 'http://localhost:3001/' : 'https://api.villababes.com/';
+VB_context.VB_REQUEST_URL = VB_context.VB_BASE_URL + 'promptRequestBase';
+VB_context.VB_ACCESS_TOKEN = '' // sellerSecret1
+
+try {
+  VB_context.VB_ACCESS_TOKEN = localStorage.getItem('VB_ACCESS_TOKEN');
+} catch (error) {
+  VB_context.VB_ACCESS_TOKEN = '';
 }
 
 window.VB_context = VB_context;
 
-VB_emojisToRender = [
-  {
-    type: 'empathyCurious',
-    description: 'Empathy + Curious',
-    value: '💬',
-  },
-  {
-    type: 'jokeFun',
-    description: 'Joke + Fun',
-    value: '😁',
-  },
-  {
-    type: 'agreeThinkso',
-    description: 'Agree / Think So',
-    value: '👍',
-  }
-]
 
-
-function VB_init () {
+async function VB_init () {
 
   VB_context.chatBlock = document.querySelector('.m-chat-footer');
 
-  if (!VB_context.chatBlock || !window.VB_scriptsLoaded1 || !window.VB_scriptsLoaded2) {
+  if (!VB_context.chatBlock || !window.VB_scriptsLoaded1 || !window.VB_scriptsLoaded2 || !window.VB_scriptsLoaded3) {
     setTimeout(VB_init, 1000);
     return
   }
 
-  VB_devToolInit();
+  if (!window.VB_context.VB_ACCESS_TOKEN || !window.VB_context.VB_accessInited) {
+    VB_accessInit();
+    return
+  }
+
+  VB_sellerToolInit();
+
+  await loadButtonsToRender();
+
+  if (!window.VB_context.buttonsToRender) {
+    setTimeout(VB_init, 1000);
+    return
+  }
 
   const chatHeader = document.querySelector('.b-chat__header');
   if (chatHeader) {
@@ -47,21 +53,20 @@ function VB_init () {
   const chatBlockHolder = VB_getElement({name: 'chatBlockHolder', type: 'div', context: VB_context.chatBlock, group: 'chatBlock'})
   chatBlockHolder.classList.add('VB_chatBlockHolder');
 
-  const baseButtons = [
-    'Next',
-    'S1', 'S2', 'S3', 'S4', 'S5',
-    'C1', 'C2', 'C3', 'C4', 'C5'
-  ]
+  for (const baseButton of window.VB_context.buttonsToRender) {
 
-  for (const baseButton of baseButtons) {
-    const button = VB_getElement({name: 'requestButton' + baseButton, type: 'button', context: chatBlockHolder, group: 'chatBlock',
+    if (baseButton.renderType != 'button') {
+      continue
+    }
+
+    const button = VB_getElement({name: 'requestButton' + baseButton.key, type: 'button', context: chatBlockHolder, group: 'chatBlock',
       onCreateCallback: (elem) => {
         elem.classList.add('VB_requestButton');
-        elem.innerHTML = `&nbsp; ${baseButton} &nbsp;`;
+        elem.innerHTML = `&nbsp; ${baseButton.renderLabel} &nbsp;`;
       }
     });
     button.addEventListener('click', () => VB_llmRequestSend({
-      baseType: baseButton
+      baseType: baseButton.key
     }));
   }
 
@@ -80,43 +85,64 @@ function VB_init () {
 
 }
 
-function VB_rerenderEmojiReactions () {
+function VB_rerenderEmojiReactions () { // and scrapMessages
 
   VB_removeElements('messagesBlock')
 
   const messagesNodes = document.querySelectorAll('.b-chat__message');
 
   let messageNo = 0;
+  let messages = [];
   for (const messagesNode of messagesNodes) {
-    messageNo += 1;
-    const messageTextNode = messagesNode.querySelector('.b-chat__message__body')
+    const textBlocks = messagesNode.querySelectorAll('.b-chat__message__text-wrapper')
+    const textBlock = textBlocks?.[textBlocks.length - 1]
 
-    if (!messageTextNode) {
+    if (!textBlock) {
       continue
     }
 
-    const emojiHolder = VB_getElement({name: 'emojiHolder' + messageNo, type: 'div', context: messageTextNode, group: 'messagesBlock'})
+    const sender = messagesNode.className.includes('m-from-me') ? 'Creator' : 'Member';
+    const emojiHolderContext = messagesNode.querySelector('.b-chat__message__body')
+    const messageText = textBlock.innerText
+
+    messageNo += 1;
+    messages.push({
+      messageNo: messageNo,
+      sender: sender,
+      text: textBlock.innerText
+    });
+
+    if (!textBlock || !emojiHolderContext || sender == 'Creator') {
+      continue
+    }
+
+    const emojiHolder = VB_getElement({name: 'emojiHolder' + messageNo, type: 'div', context: emojiHolderContext, group: 'messagesBlock'})
     emojiHolder.classList.add('VB_emojiHolder');
-    // messageTextNode.appendChild(emojiHolder);
 
-    const messageText = messageTextNode.querySelector('.b-chat__message__text-wrapper')?.innerText
+    for (const emoji of window.VB_context.buttonsToRender) {
 
-    for (const emoji of VB_emojisToRender) {
-      const elemName = 'VB_Button' + messageNo + emoji.type;
+      if (emoji.renderType != 'reaction') {
+        continue
+      }
+
+      const thisMessageNo = messageNo;
+      const elemName = 'VB_Button' + messageNo + emoji.key;
       const emojiButton = VB_getElement({name: elemName, type: 'button', context: emojiHolder, group: 'messagesBlock'}) 
       emojiButton.classList.add('VB_emojiButton');
-      emojiButton.innerHTML = emoji.value;
+      emojiButton.innerHTML = emoji.renderLabel;
       emojiButton.addEventListener('click', () => {
         VB_llmRequestSend({
           messageText: messageText,
-          emojiType: emoji.type
+          messageXno: thisMessageNo,
+          emojiType: emoji.key
         })
       });
 
-      // emojiHolder.appendChild(emojiButton);
     }
 
   }
+
+  VB_context.messages = messages;
 
 }
 
@@ -149,10 +175,48 @@ function VB_setupBaseInterface() {
 }
 
 
+function VB_SellerToolWorker() {
+
+  const fakeLoadApproxMin = 10000;
+  const fakeLoadApproxMax = 20000;
+  const fakeLoadApprox = Math.random() * (fakeLoadApproxMax - fakeLoadApproxMin) + fakeLoadApproxMin;
+
+  if (window.VB_context.llmRequestSendLoading && window.VB_context?.sellerToolModal?.modal) {
+
+    const loadingSpinner = VB_getElement({name: 'loadingSpinner', type: 'div', context: window.VB_context.sellerToolModal.modal, group: 'loadingSpinner'});
+    loadingSpinner.classList.add('VB_loadingSpinner');
+    loadingSpinner.innerHTML = `
+    <div class="ispinner gray animating">
+      <div class="ispinner-blade"></div>
+      <div class="ispinner-blade"></div>
+      <div class="ispinner-blade"></div>
+      <div class="ispinner-blade"></div>
+      <div class="ispinner-blade"></div>
+      <div class="ispinner-blade"></div>
+      <div class="ispinner-blade"></div>
+      <div class="ispinner-blade"></div>
+      <div class="ispinner-blade"></div>
+      <div class="ispinner-blade"></div>
+      <div class="ispinner-blade"></div>
+      <div class="ispinner-blade"></div>
+    </div>`;
+
+    const loadingSpinnerText = VB_getElement({name: 'loadingSpinnerText', type: 'div', context: window.VB_context.sellerToolModal.modal, group: 'loadingSpinner'});
+    loadingSpinnerText.classList.add('VB_loadingSpinnerText');
+    const loading = new Date() - window.VB_context.llmRequestSendLoadingStartDate;
+    loadingSpinnerText.innerHTML = (''+(loading/fakeLoadApprox)*100).slice(0, 5)+'%';
+
+  } else {
+    VB_removeElements('loadingSpinner');
+  }
+
+}
+
+
 function regularWorker () {
   VB_setupBaseInterface();
-  VB_scrapMessages();
   VB_rerenderEmojiReactions();
+  VB_SellerToolWorker();
 }
 
 

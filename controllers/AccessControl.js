@@ -1,5 +1,5 @@
 
-const config = require('../config');
+import config from '../config/index.js';
 
 class AccessControl {
   
@@ -20,4 +20,4 @@ class AccessControl {
 
 }
 
-module.exports = AccessControl;
+export default AccessControl;

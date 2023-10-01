@@ -1,8 +1,8 @@
 
-const config = require('../config');
-const axios = require('axios');
+import { fantasyNLPAPISecret } from './config/index.js';
+import axios from 'axios';
 
-const requestSecret = config.fantasyNLPAPISecret;
+const requestSecret = fantasyNLPAPISecret;
 
 class FantasyNLPAPI {
 
@@ -17,4 +17,4 @@ class FantasyNLPAPI {
   }
 }
 
-module.exports = FantasyNLPAPI;
+export default FantasyNLPAPI;

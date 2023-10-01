@@ -1,7 +1,8 @@
 
-const redis = require('redis');
-const config = require('../config');
-const client = redis.createClient({
+import { createClient } from 'redis';
+import config from '../config/index.js';
+
+const client = createClient({
   password: config.redisSecret,
   host: config.redisHost,
   port: config.redisPort
@@ -13,4 +14,4 @@ client.on('error', function(error) {
 
 // client.connect();
 
-module.exports = client;
+export default client;

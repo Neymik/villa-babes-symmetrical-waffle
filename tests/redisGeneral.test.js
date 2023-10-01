@@ -1,7 +1,7 @@
 
 
 import { expect, test } from "bun:test";
-const redisGeneral = require('../models/redisGeneral.js');
+const redisGeneral = require('models/redisGeneral.js');
 
 
 test("redisGeneral", async () => {

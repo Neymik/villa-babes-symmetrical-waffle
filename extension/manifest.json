@@ -25,9 +25,13 @@
       "js": [
         "scripts/miscellaneous.js",
         "scripts/content.js",
-        "scripts/devToolModal.js"
+        "scripts/sellerToolModal.js",
+        "scripts/accessTool.js"
       ],
-      "css": ["styles.css"],
+      "css": [
+        "styles.css",
+        "ispinner.css"
+      ],
       "matches": [
         "https://onlyfans.com/*"
       ]
