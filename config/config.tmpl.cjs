@@ -1,13 +1,13 @@
 
 module.exports = {
   
-  mainAppPort: 3000,
+  mainAppPort: 3001,
 
   cryptoSecret: 'secret',
   openaiSecret: 'secret',
   fantasyNLPAPISecret: 'secret',
   redisSecret: 'v0RedisSecret',
-  pgSecret: 'root',
+  pgSecret: 'pgSuperSecretMnogaBycaBab',
 
   openaiGPTmodel: 'gpt-3.5-turbo', // gpt-4
 
