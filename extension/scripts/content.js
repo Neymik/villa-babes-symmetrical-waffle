@@ -42,52 +42,13 @@ async function VB_init () {
     return
   }
 
-  const chatHeader = document.querySelector('.b-chat__header');
-  if (chatHeader) {
-    VB_context.userName = chatHeader.querySelector('.g-user-realname')?.innerText;
-    if (!VB_context.userName) {
-      VB_context.userName = chatHeader.querySelector('.g-user-name')?.innerText;
-    }
-  }
-
-  const chatBlockHolder = VB_getElement({name: 'chatBlockHolder', type: 'div', context: VB_context.chatBlock, group: 'chatBlock'})
-  chatBlockHolder.classList.add('VB_chatBlockHolder');
-
-  for (const baseButton of window.VB_context.buttonsToRender) {
-
-    if (baseButton.renderType != 'button') {
-      continue
-    }
-
-    const button = VB_getElement({name: 'requestButton' + baseButton.key, type: 'button', context: chatBlockHolder, group: 'chatBlock',
-      onCreateCallback: (elem) => {
-        elem.classList.add('VB_requestButton');
-        elem.innerHTML = `&nbsp; ${baseButton.renderLabel} &nbsp;`;
-      }
-    });
-    button.addEventListener('click', () => VB_llmRequestSend({
-      baseType: baseButton.key
-    }));
-  }
-
-  // VB_getElement({name: 'requestOutput', type: 'input', context: VB_context.chatBlock, group: 'chatBlock',
-  //   onCreateCallback: (elem) => {
-  //     elem.setAttribute('placeholder', 'requestOutput');
-  //   }
-  // });
-  // VB_getElement({name: 'directPrompt', type: 'input', context: VB_context.chatBlock, group: 'chatBlock',
-  //   onCreateCallback: (elem) => {
-  //     elem.setAttribute('placeholder', 'directPrompt');
-  //   }
-  // });
-
   setInterval(regularWorker, 2000);
 
 }
 
 function VB_rerenderEmojiReactions () { // and scrapMessages
 
-  VB_removeElements('messagesBlock')
+  // VB_removeElements('messagesBlock')
 
   const messagesNodes = document.querySelectorAll('.b-chat__message');
 
@@ -112,7 +73,7 @@ function VB_rerenderEmojiReactions () { // and scrapMessages
       text: textBlock.innerText
     });
 
-    if (!textBlock || !emojiHolderContext || sender == 'Creator') {
+    if (!textBlock || !emojiHolderContext) {
       continue
     }
 
@@ -121,7 +82,11 @@ function VB_rerenderEmojiReactions () { // and scrapMessages
 
     for (const emoji of window.VB_context.buttonsToRender) {
 
-      if (emoji.renderType != 'reaction') {
+      if ((emoji.renderData.type != 'reaction') ||
+        (sender == 'Creator' && !emoji.renderData.forCreatorMessage) ||
+        (emoji.renderData.forQuestionMessage == true && !messageText.includes('?')) || 
+        (emoji.renderData.forQuestionMessage == false && messageText.includes('?'))
+      ) {
         continue
       }
 
@@ -134,7 +99,7 @@ function VB_rerenderEmojiReactions () { // and scrapMessages
         VB_llmRequestSend({
           messageText: messageText,
           messageXno: thisMessageNo,
-          emojiType: emoji.key
+          promptTaskType: emoji.key
         })
       });
 
@@ -147,7 +112,7 @@ function VB_rerenderEmojiReactions () { // and scrapMessages
 }
 
 
-function VB_setupBaseInterface() {
+function VB_rerenderBaseInterface() {
 
   VB_context.chatBlock = document.querySelector('.m-chat-footer');
 
@@ -155,22 +120,40 @@ function VB_setupBaseInterface() {
     return
   }
 
-  // VB_getElement({name: 'requestButton', type: 'button', context: VB_context.chatBlock, group: 'chatBlock',
-  //   onCreateCallback: (elem) => {
-  //     elem.innerHTML = 'Next';
-  //     elem.addEventListener('click', VB_llmRequestSend);
-  //   }
-  // });
-  // VB_getElement({name: 'requestOutput', type: 'input', context: VB_context.chatBlock, group: 'chatBlock',
-  //   onCreateCallback: (elem) => {
-  //     elem.setAttribute('placeholder', 'requestOutput');
-  //   }
-  // });
-  // VB_getElement({name: 'directPrompt', type: 'input', context: VB_context.chatBlock, group: 'chatBlock',
-  //   onCreateCallback: (elem) => {
-  //     elem.setAttribute('placeholder', 'directPrompt');
-  //   }
-  // });
+  let chatBlockHolder = document.querySelector('.VB_chatBlockHolder');
+
+  if (chatBlockHolder) {
+    return
+  }
+
+  const chatHeader = document.querySelector('.b-chat__header');
+  if (chatHeader) {
+    VB_context.userName = chatHeader.querySelector('.g-user-realname')?.innerText;
+    if (!VB_context.userName) {
+      VB_context.userName = chatHeader.querySelector('.g-user-name')?.innerText;
+    }
+  }
+
+  chatBlockHolder = VB_getElement({name: 'chatBlockHolder', type: 'div', context: VB_context.chatBlock, group: 'chatBlock'})
+  chatBlockHolder.classList.add('VB_chatBlockHolder');
+
+  for (const baseButton of window.VB_context.buttonsToRender) {
+
+    if (baseButton.renderData.type != 'button') {
+      continue
+    }
+
+    const button = VB_getElement({name: 'requestButton' + baseButton.key, type: 'button', context: chatBlockHolder, group: 'chatBlock',
+      onCreateCallback: (elem) => {
+        elem.classList.add('VB_requestButton');
+        elem.style['border-color'] = baseButton.renderData.color;
+        elem.innerHTML = `&nbsp; ${baseButton.renderLabel} &nbsp;`;
+      }
+    });
+    button.addEventListener('click', () => VB_llmRequestSend({
+      promptTaskType: baseButton.key
+    }));
+  }
 
 }
 
@@ -214,7 +197,7 @@ function VB_SellerToolWorker() {
 
 
 function regularWorker () {
-  VB_setupBaseInterface();
+  VB_rerenderBaseInterface();
   VB_rerenderEmojiReactions();
   VB_SellerToolWorker();
 }

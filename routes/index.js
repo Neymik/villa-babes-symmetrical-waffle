@@ -25,7 +25,7 @@ export async function applyRoutes(fastify) {
     const data = await sql`
       SELECT * FROM public."promptsBase" AS promptsBase
       WHERE promptsBase."active" = true
-      AND promptsBase."renderType" IS NOT NULL
+      AND promptsBase."renderData" IS NOT NULL
     `;
     return data; 
 
@@ -43,7 +43,6 @@ export async function applyRoutes(fastify) {
         promptTaskType: body.promptTaskType,
         requestString: body.requestString,
         messageXno: body.messageXno,
-        baseType: body.baseType,
         userName: body.userName
       });
     }

@@ -1,14 +1,21 @@
 
+try {
+  promptMode = localStorage.getItem('promptMode') == 'true' ? true : false;
+} catch (error) {
+  promptMode = false;
+}
+
+
 function VB_sellerToolInit () {
 
   const navBar = document.querySelector('.l-header__menu');
 
   const openModalButton = VB_getElement({name: 'openModalButton', type: 'a', context: navBar, group: 'sellerTool'});
-  openModalButton.classList.add(...'l-header__menu__item m-size-lg-hover m-with-round-hover m-width-fluid-hover'.split(' '));
-  openModalButton.innerHTML = `Villa Babes`;
+  openModalButton.classList.add(...'VB_navBarButton l-header__menu__item m-size-lg-hover m-with-round-hover m-width-fluid-hover'.split(' '));
+  openModalButton.innerHTML = `Villa Talk`;
 
-  const icon = VB_getElement({name: 'icon', type: 'img', context: openModalButton, group: 'sellerTool'});
-  icon.src = chrome.runtime.getURL("villa-babes-logo.png");
+  // const icon = VB_getElement({name: 'icon', type: 'img', context: openModalButton, group: 'sellerTool'});
+  // icon.src = chrome.runtime.getURL("villa-babes-logo.png");
 
   window.VB_sellerToolOpened = false;
   openModalButton.addEventListener('click', VB_sellerToolClick);
@@ -37,25 +44,31 @@ function VB_opensellerTool () {
   const modal = VB_getElement({name: 'modal', type: 'div', context: documentBody, group: 'sellerToolModal'});
   modal.classList.add('VB_modal');
 
+  let inputPrompt = undefined;
+  let modalResults = undefined;
 
-  const inputPrompt = VB_getElement({name: 'modalInput_prompt', type: 'textarea', context: modal, group: 'sellerToolModal'});
-  inputPrompt.classList.add('VB_inputModal');
-  inputPrompt.setAttribute('type', 'text');
-  inputPrompt.setAttribute('placeholder', 'prompt');
+  if (promptMode) {
+    
+    inputPrompt = VB_getElement({name: 'modalInput_prompt', type: 'textarea', context: modal, group: 'sellerToolModal'});
+    inputPrompt.classList.add('VB_inputModal');
+    inputPrompt.setAttribute('type', 'text');
+    inputPrompt.setAttribute('placeholder', 'prompt');
 
-  inputPrompt.addEventListener('input', (value) => {
-    window.VB_context['modalInputValue_prompt'] = value.target.value;
-  });
+    inputPrompt.addEventListener('input', (value) => {
+      window.VB_context['modalInputValue_prompt'] = value.target.value;
+    });
 
-  if (window.VB_context['modalInputValue_prompt']) {
-    inputPrompt.value = window.VB_context['modalInputValue_prompt'];
+    if (window.VB_context['modalInputValue_prompt']) {
+      inputPrompt.value = window.VB_context['modalInputValue_prompt'];
+    }
+
+
+    modalResult = VB_getElement({name: 'modalResults', type: 'div', context: documentBody, group: 'sellerToolModal'});
+    modalResult.classList.add('VB_modalResult');
+
   }
 
-
-  const modalResult = VB_getElement({name: 'modalResults', type: 'div', context: documentBody, group: 'sellerToolModal'});
-  modalResult.classList.add('VB_modalResult');
-
-  const inputResult = VB_getElement({name: 'modalInput_result', type: 'textarea', context: modalResult, group: 'sellerToolModal'});
+  const inputResult = VB_getElement({name: 'modalInput_result', type: 'textarea', context: modalResults ? modalResults: modal, group: 'sellerToolModal'});
   inputResult.classList.add('VB_inputModal');
   inputResult.setAttribute('type', 'text');
   inputResult.setAttribute('placeholder', 'result');
@@ -81,20 +94,27 @@ function VB_opensellerTool () {
   modalButtonClose.addEventListener('click', VB_sellerToolClick);
 
 
-  const modalButtonReset = VB_getElement({name: 'modalButtonReset', type: 'button', context: modalButtons, group: 'sellerToolModal'});
-  modalButtonReset.classList.add('VB_modalButton');
-  modalButtonReset.innerHTML = 'Reset';
-  modalButtonReset.addEventListener('click', () => VB_llmRequestSend({
-    promptOnly: true,
-  }));
+  // const modalButtonReset = VB_getElement({name: 'modalButtonReset', type: 'button', context: modalButtons, group: 'sellerToolModal'});
+  // modalButtonReset.classList.add('VB_modalButton');
+  // modalButtonReset.innerHTML = 'Reset';
+  // modalButtonReset.addEventListener('click', () => VB_llmRequestSend({
+  //   promptOnly: true,
+  // }));
 
 
   const modalButtonGenerate = VB_getElement({name: 'modalButtonGenerate', type: 'button', context: modalButtons, group: 'sellerToolModal'});
   modalButtonGenerate.classList.add('VB_modalButtonAccent');
-  modalButtonGenerate.innerHTML = 'Generate';
-  modalButtonGenerate.addEventListener('click', () => VB_llmRequestSend({
-    directPrompt: inputPrompt.value,
-  }));
+  modalButtonGenerate.innerHTML = 'Regenerate';
+  modalButtonGenerate.addEventListener('click', () => {
+    let directPrompt = undefined;
+    if (inputPrompt) {
+      directPrompt = inputPrompt?.value
+    }
+    VB_llmRequestSend({
+      promptTaskType: window.VB_context.lastPromptTaskType,
+      directPrompt: directPrompt,
+    });
+  });
 
 
 }

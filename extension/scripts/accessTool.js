@@ -4,11 +4,11 @@ function VB_accessInit () {
   const navBar = document.querySelector('.l-header__menu');
 
   const openModalButton = VB_getElement({name: 'openModalButton', type: 'a', context: navBar, group: 'access'});
-  openModalButton.classList.add(...'l-header__menu__item m-size-lg-hover m-with-round-hover m-width-fluid-hover'.split(' '));
-  openModalButton.innerHTML = `Villa Babes Access`;
+  openModalButton.classList.add(...'VB_navBarButton l-header__menu__item m-size-lg-hover m-with-round-hover m-width-fluid-hover'.split(' '));
+  openModalButton.innerHTML = `Villa Login`;
 
-  const icon = VB_getElement({name: 'icon', type: 'img', context: openModalButton, group: 'access'});
-  icon.src = chrome.runtime.getURL("villa-babes-logo.png");
+  // const icon = VB_getElement({name: 'icon', type: 'img', context: openModalButton, group: 'access'});
+  // icon.src = chrome.runtime.getURL("villa-babes-logo.png");
 
   window.VB_accessModalOpened = false;
   openModalButton.addEventListener('click', VB_accessClick);
@@ -41,11 +41,11 @@ function VB_openAccessModal () {
   const documentBody = document.querySelector('body');
 
   const modal = VB_getElement({name: 'modal', type: 'div', context: documentBody, group: 'accessModal'});
-  modal.classList.add('VB_modal');
+  modal.classList.add('VB_modalAccess');
 
 
   const inputCode = VB_getElement({name: 'modalInput_code', type: 'input', context: modal, group: 'accessModal'});
-  inputCode.setAttribute('placeholder', 'access code');
+  inputCode.setAttribute('placeholder', '>Put your key here<');
 
   inputCode.addEventListener('input', (value) => {
     window.VB_context['VB_ACCESS_TOKEN'] = value.target.value;

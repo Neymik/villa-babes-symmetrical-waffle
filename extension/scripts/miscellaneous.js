@@ -54,18 +54,24 @@ function VB_getElement ({ name, type, context, group, onCreateCallback = (elem)=
   return elem
 }
 
-async function VB_llmRequestSend ({messageText, messageXno, emojiType, baseType, directPrompt, promptOnly}) {
+async function VB_llmRequestSend ({messageText, messageXno, promptTaskType = 'default', directPrompt, promptOnly}) {
 
   const startDate = new Date();
   window.VB_context.llmRequestSendLoading = true;
   window.VB_context.llmRequestSendLoadingStartDate = startDate;
+
+  if (!window.VB_sellerToolOpened) {
+    VB_opensellerTool()
+    window.VB_sellerToolOpened = true;
+  }
 
   for (const inputForm of document.querySelectorAll('.VB_inputModal')) {
     inputForm.setAttribute('disabled', true);
     inputForm.classList.add('VB_disabled');
   }
 
-  const promptTaskType = emojiType || baseType || 'default';
+  window.VB_context.lastPromptTaskType = promptTaskType;
+
   const userName = VB_context.userName;
 
   const requestBody = {
@@ -99,11 +105,6 @@ async function VB_llmRequestSend ({messageText, messageXno, emojiType, baseType,
   }
 
   console.log(responseData)
-
-  if (!window.VB_sellerToolOpened) {
-    VB_opensellerTool()
-    window.VB_sellerToolOpened = true;
-  }
 
   if (VB_context.sellerToolModal?.modalInput_result) {
     VB_context.sellerToolModal.modalInput_result.value = responseData.result;
@@ -153,7 +154,25 @@ async function loadButtonsToRender () {
       },
     });
 
-    window.VB_context.buttonsToRender = await response.json();
+    const buttonsToRender = await response.json();
+
+    buttonsToRender.sort((a, b) => {
+      if (!a.priority) {
+        a.priority = 0;
+      }
+      if (!b.priority) {
+        b.priority = 0;
+      }
+      if (a.priority > b.priority) {
+        return 1
+      }
+      if (a.priority < b.priority) {
+        return -1
+      }
+      return 0
+    })
+
+    window.VB_context.buttonsToRender = buttonsToRender;
     console.log(window.VB_context.buttonsToRender)
   } catch (error) {
     console.log({error})
