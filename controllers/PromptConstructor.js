@@ -1,6 +1,6 @@
 
-import config from '../config/index.js';
-import redis from '../models/redisGeneral.js';
+// import config from '../config/index.js';
+// import redis from '../models/redisGeneral.js';
 
 import PromptConstructorModel from '../models/promptConstructorModel.js';
 
@@ -30,8 +30,7 @@ class PromptConstructor {
 
       dialogContext += '\n'
       dialogContext += 'Message ' + messageNo + '\n';
-      dialogContext += 'Sender: ' + sender + '\n';
-      dialogContext += 'Text: ' + message.text + '\n';
+      dialogContext += sender + ': ' + message.text + '\n';
 
     }
 

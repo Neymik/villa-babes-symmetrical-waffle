@@ -37,7 +37,7 @@ function VB_getElement ({ name, type, context, group, onCreateCallback = (elem)=
 
   elem = document.getElementById(elemId);
 
-  if (elem) {
+  if (elem) { // fix me im dumb
     if (elemBase[name]) {
       elemBase[name].remove();
     }
@@ -87,24 +87,42 @@ async function VB_llmRequestSend ({messageText, messageXno, promptTaskType = 'de
   console.log(requestBody)
   let responseData = {}
 
-  try {
-    const response = await fetch(VB_context.VB_REQUEST_URL, {
-      method: "POST",
-      cors: "no-cors",
-      headers: {
-        "Content-Type": "application/json",
-        "x-access-token": VB_context.VB_ACCESS_TOKEN,
-      },
-      body: JSON.stringify(requestBody),
-    });
-  
-    responseData = await response.json();
-  } catch (error) {
-    console.log({error})
-    return
+  const triesMax = 3;
+  for (let tryNo = 0; tryNo < 3; tryNo++) {
+
+    try {
+      const response = await fetch(VB_context.VB_REQUEST_URL, {
+        method: "POST",
+        cors: "no-cors",
+        headers: {
+          "Content-Type": "application/json",
+          "x-access-token": VB_context.VB_ACCESS_TOKEN,
+        },
+        body: JSON.stringify(requestBody),
+      });
+    
+      responseData = await response.json();
+      break
+
+    } catch (error) {
+
+      console.log({error})
+
+      if (VB_context.sellerToolModal?.modalDuration) {
+        VB_context.sellerToolModal.modalDuration.innerHTML = 'Request failed. Retrying... ' + tryNo + '/' + triesMax;
+      }
+      await new Promise(r => setTimeout(r, 1000));
+    }
+
   }
 
   console.log(responseData)
+
+  if (!responseData) {
+    if (VB_context.sellerToolModal?.modalDuration) {
+      VB_context.sellerToolModal.modalDuration.innerHTML = 'Request failed, try again later :(';
+    }
+  }
 
   if (VB_context.sellerToolModal?.modalInput_result) {
     VB_context.sellerToolModal.modalInput_result.value = responseData.result;

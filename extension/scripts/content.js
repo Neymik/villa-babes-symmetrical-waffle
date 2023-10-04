@@ -84,6 +84,7 @@ function VB_rerenderEmojiReactions () { // and scrapMessages
 
       if ((emoji.renderData.type != 'reaction') ||
         (sender == 'Creator' && !emoji.renderData.forCreatorMessage) ||
+        (emoji.renderData.forCreatorMessage && sender != 'Creator') ||
         (emoji.renderData.forQuestionMessage == true && !messageText.includes('?')) || 
         (emoji.renderData.forQuestionMessage == false && messageText.includes('?'))
       ) {
@@ -94,7 +95,7 @@ function VB_rerenderEmojiReactions () { // and scrapMessages
       const elemName = 'VB_Button' + messageNo + emoji.key;
       const emojiButton = VB_getElement({name: elemName, type: 'button', context: emojiHolder, group: 'messagesBlock'}) 
       emojiButton.classList.add('VB_emojiButton');
-      emojiButton.innerHTML = emoji.renderLabel;
+      emojiButton.innerHTML = emoji.renderData.label;
       emojiButton.addEventListener('click', () => {
         VB_llmRequestSend({
           messageText: messageText,
@@ -106,6 +107,9 @@ function VB_rerenderEmojiReactions () { // and scrapMessages
     }
 
   }
+
+  // save only last 20 messages
+  messages = messages.slice(-20);
 
   VB_context.messages = messages;
 
@@ -147,7 +151,7 @@ function VB_rerenderBaseInterface() {
       onCreateCallback: (elem) => {
         elem.classList.add('VB_requestButton');
         elem.style['border-color'] = baseButton.renderData.color;
-        elem.innerHTML = `&nbsp; ${baseButton.renderLabel} &nbsp;`;
+        elem.innerHTML = `&nbsp; ${baseButton.renderData.label} &nbsp;`;
       }
     });
     button.addEventListener('click', () => VB_llmRequestSend({

@@ -63,8 +63,8 @@ function VB_opensellerTool () {
     }
 
 
-    modalResult = VB_getElement({name: 'modalResults', type: 'div', context: documentBody, group: 'sellerToolModal'});
-    modalResult.classList.add('VB_modalResult');
+    modalResults = VB_getElement({name: 'modalResults', type: 'div', context: documentBody, group: 'sellerToolModal'});
+    modalResults.classList.add('VB_modalResult');
 
   }
 
