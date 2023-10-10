@@ -10,6 +10,14 @@ class feRenders {
     `
   }
 
+  static async getById(id) {
+    return await sql`
+      SELECT * FROM public."feRenders" AS feRenders
+      WHERE feRenders."active" = true
+      AND feRenders."id" = ${id}
+    `
+  }
+
 }
 
 export default feRenders
