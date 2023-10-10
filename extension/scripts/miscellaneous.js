@@ -54,7 +54,7 @@ function VB_getElement ({ name, type, context, group, onCreateCallback = (elem)=
   return elem
 }
 
-async function VB_llmRequestSend ({messageText, messageXno, promptTaskType = 'default', directPrompt, promptOnly}) {
+async function VB_llmRequestSend ({messageText, messageXno, taskId, directPrompt, promptOnly}) {
 
   const startDate = new Date();
   window.VB_context.llmRequestSendLoading = true;
@@ -70,14 +70,14 @@ async function VB_llmRequestSend ({messageText, messageXno, promptTaskType = 'de
     inputForm.classList.add('VB_disabled');
   }
 
-  window.VB_context.lastPromptTaskType = promptTaskType;
+  window.VB_context.lastTaskId = taskId;
 
   const userName = VB_context.userName;
 
   const requestBody = {
     messagesArray: VB_context.messages,
     requestString: messageText,
-    promptTaskType: promptTaskType,
+    taskId: taskId,
     directPrompt: directPrompt,
     userName: userName,
     promptOnly,
@@ -163,7 +163,7 @@ async function VB_llmRequestSend ({messageText, messageXno, promptTaskType = 'de
 async function loadButtonsToRender () {
 
   try {
-    const response = await fetch(window.VB_context.VB_BASE_URL + 'prompts', {
+    const response = await fetch(window.VB_context.VB_BASE_URL + 'feRenders', {
       method: "GET",
       cors: "no-cors",
       headers: {
@@ -175,16 +175,16 @@ async function loadButtonsToRender () {
     const buttonsToRender = await response.json();
 
     buttonsToRender.sort((a, b) => {
-      if (!a.priority) {
-        a.priority = 0;
+      if (!a.renderData.priority) {
+        a.renderData.priority = 0;
       }
       if (!b.priority) {
-        b.priority = 0;
+        b.renderData.priority = 0;
       }
-      if (a.priority > b.priority) {
+      if (a.renderData.priority > b.renderData.priority) {
         return 1
       }
-      if (a.priority < b.priority) {
+      if (a.renderData.priority < b.renderData.priority) {
         return -1
       }
       return 0

@@ -111,7 +111,7 @@ function VB_opensellerTool () {
       directPrompt = inputPrompt?.value
     }
     VB_llmRequestSend({
-      promptTaskType: window.VB_context.lastPromptTaskType,
+      taskId: window.VB_context.lastTaskId,
       directPrompt: directPrompt,
     });
   });

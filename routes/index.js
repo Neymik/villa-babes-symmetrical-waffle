@@ -5,9 +5,10 @@ import PromptConstructor from '../controllers/PromptConstructor.js';
 
 import fastifyMiddie from '@fastify/middie';
 import { accessMiddleware } from '../middlewares/accessMiddleware.js';
-import { debugV0 } from '../middlewares/debugMiddleware.js';
+import { logsMiddleware } from '../middlewares/logsMiddleware.js';
 
-import sql from '../models/pgGeneral.js';
+import { feRenders } from '../models/feRenders.js';
+import { scripts } from '../models/scripts.js';
 
 export async function applyRoutes(fastify) {
 
@@ -16,31 +17,36 @@ export async function applyRoutes(fastify) {
   // signature check
   fastify.use(accessMiddleware);
 
+  // logs middleware
+  fastify.addHook('onSend', (request, reply, payload, done) => {
+    logsMiddleware(request, payload);
+    return done();
+  });
+
   fastify.get('/', async (request, reply) => {
     return { result: 'Operational' }
   });
 
-  fastify.get('/prompts', async (request, reply) => {
-
-    const data = await sql`
-      SELECT * FROM public."promptsBase" AS promptsBase
-      WHERE promptsBase."active" = true
-      AND promptsBase."renderData" IS NOT NULL
-    `;
-    return data; 
+  fastify.get('/feRenders', async (request, reply) => {
+    return await feRenders.getAll();
 
   });
 
-  fastify.post('/promptRequestBase', async (request, reply) => {
+  fastify.post('/requestBase', async (request, reply) => {
+
+    const task = await feRenders.getById(body.taskId);
 
     const body = request.body;
     let prompt = '';
     if (body.directPrompt) {
       prompt = body.directPrompt;
+    } else if (task.type == 'script') {
+      return scripts.getByCategory(task.valueKey);
+      
     } else {
       prompt = await PromptConstructor.generate({
         messagesArray: body.messagesArray,
-        promptTaskType: body.promptTaskType,
+        promptTaskType: task.valueKey,
         requestString: body.requestString,
         messageXno: body.messageXno,
         userName: body.userName

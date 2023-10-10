@@ -7,7 +7,7 @@ try {
 
 VB_context = {}
 VB_context.VB_BASE_URL = devMode ? 'http://localhost:3001/' : 'https://api.villababes.com/';
-VB_context.VB_REQUEST_URL = VB_context.VB_BASE_URL + 'promptRequestBase';
+VB_context.VB_REQUEST_URL = VB_context.VB_BASE_URL + 'requestBase';
 VB_context.VB_ACCESS_TOKEN = '' // sellerSecret1
 
 try {
@@ -50,7 +50,16 @@ function VB_rerenderEmojiReactions () { // and scrapMessages
 
   // VB_removeElements('messagesBlock')
 
-  const messagesNodes = document.querySelectorAll('.b-chat__message');
+  let messagesNodes = document.querySelectorAll('.b-chat__message');
+
+  if (!messagesNodes?.length) {
+    return
+  }
+
+  messagesNodes = Array.from(messagesNodes)
+
+  const maxMessages = 20;
+  messagesNodes = messagesNodes.slice(-maxMessages);
 
   let messageNo = 0;
   let messages = [];
@@ -92,7 +101,7 @@ function VB_rerenderEmojiReactions () { // and scrapMessages
       }
 
       const thisMessageNo = messageNo;
-      const elemName = 'VB_Button' + messageNo + emoji.key;
+      const elemName = 'VB_Button' + messageNo + emoji.id;
       const emojiButton = VB_getElement({name: elemName, type: 'button', context: emojiHolder, group: 'messagesBlock'}) 
       emojiButton.classList.add('VB_emojiButton');
       emojiButton.innerHTML = emoji.renderData.label;
@@ -100,16 +109,13 @@ function VB_rerenderEmojiReactions () { // and scrapMessages
         VB_llmRequestSend({
           messageText: messageText,
           messageXno: thisMessageNo,
-          promptTaskType: emoji.key
+          taskId: emoji.id
         })
       });
 
     }
 
   }
-
-  // save only last 20 messages
-  messages = messages.slice(-20);
 
   VB_context.messages = messages;
 
@@ -147,7 +153,7 @@ function VB_rerenderBaseInterface() {
       continue
     }
 
-    const button = VB_getElement({name: 'requestButton' + baseButton.key, type: 'button', context: chatBlockHolder, group: 'chatBlock',
+    const button = VB_getElement({name: 'requestButton' + baseButton.id, type: 'button', context: chatBlockHolder, group: 'chatBlock',
       onCreateCallback: (elem) => {
         elem.classList.add('VB_requestButton');
         elem.style['border-color'] = baseButton.renderData.color;
@@ -155,7 +161,7 @@ function VB_rerenderBaseInterface() {
       }
     });
     button.addEventListener('click', () => VB_llmRequestSend({
-      promptTaskType: baseButton.key
+      taskId: baseButton.id
     }));
   }
 
