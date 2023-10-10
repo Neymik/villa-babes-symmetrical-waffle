@@ -35,13 +35,14 @@ export async function applyRoutes(fastify) {
   fastify.post('/requestBase', async (request, reply) => {
 
     const body = request.body;
-    const task = await feRenders.getById(body.taskId);
+    const task = await feRenders.getById(body.taskId)[0];
 
     let prompt = '';
-    if (body.directPrompt) {
+    if (task.type == 'script') {
+      return { result: await scripts.getByCategory(task.valueKey)};
+      
+    } else if (body.directPrompt) {
       prompt = body.directPrompt;
-    } else if (task.type == 'script') {
-      return scripts.getByCategory(task.valueKey);
       
     } else {
       prompt = await PromptConstructor.generate({
