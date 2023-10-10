@@ -34,9 +34,9 @@ export async function applyRoutes(fastify) {
 
   fastify.post('/requestBase', async (request, reply) => {
 
+    const body = request.body;
     const task = await feRenders.getById(body.taskId);
 
-    const body = request.body;
     let prompt = '';
     if (body.directPrompt) {
       prompt = body.directPrompt;
