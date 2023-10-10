@@ -7,8 +7,8 @@ import fastifyMiddie from '@fastify/middie';
 import { accessMiddleware } from '../middlewares/accessMiddleware.js';
 import { logsMiddleware } from '../middlewares/logsMiddleware.js';
 
-import { feRenders } from '../models/feRenders.js';
-import { scripts } from '../models/scripts.js';
+import feRenders from '../models/feRenders.js';
+import scripts from '../models/scripts.js';
 
 export async function applyRoutes(fastify) {
 
