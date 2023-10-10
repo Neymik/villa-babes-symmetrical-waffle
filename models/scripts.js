@@ -8,7 +8,7 @@ class feRenders {
       SELECT * FROM public."scriptsBase" AS scriptsBase
       WHERE scriptsBase."active" = true
       AND scriptsBase."category" = ${category}
-      ORDER BY RAND()
+      ORDER BY RANDOM()
       LIMIT 3
     `
   }
