@@ -4,7 +4,8 @@
   "type": "module",
   "scripts": {
     "app": "bun run start",
-    "start": "NODE_ENV=development node app.js",
+    "start": "node app.js",
+    "dev": "NODE_ENV=development node app.js",
     "pm2": "pm2 start init/pm2.config.cjs"
   },
   "devDependencies": {

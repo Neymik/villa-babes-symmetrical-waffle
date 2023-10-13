@@ -15,7 +15,7 @@ export async function logsMiddleware({ request, payload }) {
       "data",
       "type"
     ) VALUES (
-      '${data}',
+      '${JSON.stringify(data)}',
       '${type}'
     )
   `;
