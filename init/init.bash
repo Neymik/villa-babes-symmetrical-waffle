@@ -10,3 +10,7 @@ bun test
 pm2 kill
 pm2 start init/pm2.config.cjs
 pm2 save
+
+# nginx
+nginx -t
+service nginx restart
