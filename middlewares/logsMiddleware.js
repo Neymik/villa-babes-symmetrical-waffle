@@ -12,19 +12,22 @@ export async function logsMiddleware({ request, payload }) {
 
   const type = `Request ${request?.method || ''} ${request?.url?.pathname || ''}`
 
-  console.log ({data:JSON.stringify(data), type})
-
   let result;
+
+  const request = `
+    INSERT INTO public."logs" (
+      "data",
+      "type"
+    ) VALUES (
+      '${JSON.stringify(data)}',
+      '${type}'
+    )
+  `
+
+  console.log(request)
+
   try {
-    result = await sql`
-      INSERT INTO public."logs" (
-        "data",
-        "type"
-      ) VALUES (
-        '${JSON.stringify(data)}',
-        '${type}'
-      )
-    `;
+    result = await sql`${request}`;
   } catch (error) {
     console.log({error})
   }
