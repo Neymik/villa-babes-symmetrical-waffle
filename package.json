@@ -4,9 +4,7 @@
   "type": "module",
   "scripts": {
     "app": "bun run start",
-    "start": "bun run app.js",
-    "dev": "bun run app.js --watch",
-    "test": "bun test --timeout 10000",
+    "start": "NODE_ENV=development node app.js",
     "pm2": "pm2 start init/pm2.config.cjs"
   },
   "devDependencies": {
