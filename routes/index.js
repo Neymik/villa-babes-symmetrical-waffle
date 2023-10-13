@@ -18,8 +18,8 @@ export async function applyRoutes(fastify) {
   fastify.use(accessMiddleware);
 
   // logs middleware
-  fastify.addHook('onSend', (request, reply, payload, done) => {
-    logsMiddleware(request, payload);
+  fastify.addHook('onSend', async (request, reply, payload, done) => {
+    await logsMiddleware({request, payload});
     return done();
   });
 
