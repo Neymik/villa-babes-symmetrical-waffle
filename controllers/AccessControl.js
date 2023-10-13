@@ -1,5 +1,5 @@
 
-import sql from '../models/pgGeneral';
+import sql from '../models/pgGeneral.js';
 
 // TODO сделать нормально
 const dbSellers = await sql`
