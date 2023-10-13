@@ -14,7 +14,7 @@ export async function logsMiddleware({ request, payload }) {
 
   let result;
 
-  const request = `
+  const sqlRequest = `
     INSERT INTO public."logs" (
       "data",
       "type"
@@ -24,10 +24,10 @@ export async function logsMiddleware({ request, payload }) {
     )
   `
 
-  console.log(request)
+  console.log(sqlRequest)
 
   try {
-    result = await sql`${request}`;
+    result = await sql`${sqlRequest}`;
   } catch (error) {
     console.log({error})
   }
