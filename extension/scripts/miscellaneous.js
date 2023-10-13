@@ -174,23 +174,23 @@ async function loadButtonsToRender () {
 
     const buttonsToRender = await response.json();
 
-    buttonsToRender.sort((a, b) => {
+    const buttonsToRenderSorted = buttonsToRender.sort((a, b) => {
       if (!a.renderData.priority) {
         a.renderData.priority = 0;
       }
-      if (!b.priority) {
+      if (!b.renderData.priority) {
         b.renderData.priority = 0;
       }
-      if (a.renderData.priority > b.renderData.priority) {
+      if (Number(a.renderData.priority) > Number(b.renderData.priority)) {
         return 1
       }
-      if (a.renderData.priority < b.renderData.priority) {
+      if (Number(a.renderData.priority) < Number(b.renderData.priority)) {
         return -1
       }
       return 0
     })
 
-    window.VB_context.buttonsToRender = buttonsToRender;
+    window.VB_context.buttonsToRender = buttonsToRenderSorted;
     console.log(window.VB_context.buttonsToRender)
   } catch (error) {
     console.log({error})

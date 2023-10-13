@@ -40,7 +40,7 @@ export async function applyRoutes(fastify) {
     let prompt = '';
     if (task.type == 'script') {
       const result = await scripts.getByCategory(task.valueKey)
-      const resultString = result.map((item) => item.value).join('\n');
+      const resultString = result.map((item) => item.value).join('\n\n');
       return { result: resultString };
       
     } else if (body.directPrompt) {
@@ -69,47 +69,6 @@ export async function applyRoutes(fastify) {
 
   });
 
-
-
-  fastify.get('/prompts', async (request, reply) => {
-
-    const data = await sql`
-      SELECT * FROM public."promptsBase" AS promptsBase
-      WHERE promptsBase."active" = true
-      AND promptsBase."renderData" IS NOT NULL
-    `;
-    return data; 
-
-  });
-
-  fastify.post('/promptRequestBase', async (request, reply) => {
-
-    const body = request.body;
-    let prompt = '';
-    if (body.directPrompt) {
-      prompt = body.directPrompt;
-    } else {
-      prompt = await PromptConstructor.generate({
-        messagesArray: body.messagesArray,
-        promptTaskType: body.promptTaskType,
-        requestString: body.requestString,
-        messageXno: body.messageXno,
-        userName: body.userName
-      });
-    }
-
-    const promptOnly = body.promptOnly;
-    console.log({prompt})
-
-    if (promptOnly) {
-      return { prompt };
-    }
-    
-    const result = await ChatGPTAPI.requestBase(prompt);
-    console.log({result})
-    return { result, prompt };
-
-  });
 
   return fastify;
 }

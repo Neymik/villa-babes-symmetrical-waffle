@@ -8,9 +8,9 @@ class feRenders {
       SELECT * FROM public."scriptsBase" AS scriptsBase
       WHERE scriptsBase."active" = true
       AND scriptsBase."category" = ${category}
-      ORDER BY RANDOM()
-      LIMIT 3
     `
+    // ORDER BY RANDOM()
+    // LIMIT 3
   }
 
   static async getAll() {

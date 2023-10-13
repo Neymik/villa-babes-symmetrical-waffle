@@ -1,13 +1,19 @@
 
-import config from '../config/index.js';
+import sql from '../models/pgGeneral';
+
+// TODO сделать нормально
+const dbSellers = await sql`
+  SELECT * FROM public."sellers" AS sellers
+  WHERE sellers."active" = true
+`
 
 class AccessControl {
   
-  static v01CheckAccess(accessToken) {
+  static v2CheckAccess(accessToken) {
 
-    const access = config.v01SecuritySecrets.find((v01SecuritySecret) => {
-      if (accessToken === v01SecuritySecret.sellerSecret) {
-        return v01SecuritySecret;
+    const access = dbSellers.find((seller) => {
+      if (accessToken === seller.pass) {
+        return seller;
       }
     })
 

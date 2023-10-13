@@ -17,13 +17,4 @@ module.exports = {
   pgUser: 'postgresUserVB',
   pgDB: 'postgres',
 
-
-  v01SecuritySecrets: [
-    {
-      sellerSecret: 'sellerSecret1',
-      sellerCreator: 'sellerCreator1',
-      creatorContext: 'creatorContext1',
-    }
-  ],
-
 };
