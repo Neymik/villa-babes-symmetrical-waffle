@@ -15,8 +15,8 @@ export async function logsMiddleware({ request, payload }) {
       "data",
       "type"
     ) VALUES (
-      "${data}",
-      "${type}"
+      '${data}',
+      '${type}'
     )
   `;
 };
