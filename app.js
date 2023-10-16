@@ -10,7 +10,9 @@ const fastify = Fastify({
   logger: process.env.NODE_ENV === 'development' ? true : false,
 })
 
-// fastify.register(cors, {});
+if (process.env.NODE_ENV === 'development') {
+  fastify.register(cors, {});
+}
 
 const start = async () => {
   try {

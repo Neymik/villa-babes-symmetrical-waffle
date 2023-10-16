@@ -15,9 +15,9 @@ export async function applyRoutes(fastify) {
   await fastify.register(fastifyMiddie);
   
   // signature check
-  fastify.use(accessMiddleware);
+  fastify.decorate('access', accessMiddleware);
 
-  // logs middleware
+  // logs
   fastify.addHook('onSend', async (request, reply, payload) => {
     await logsMiddleware({request, payload});
   });
