@@ -43,7 +43,29 @@ async function VB_init () {
   }
 
   setInterval(regularWorker, 2000);
+  let items = ['hi 1', 'hi 2', 'hi 3', 'hi 4']
+  const myVueInstance = new Vbex(document, {'fiv': false, 'maxim': '12345', fiv2: true, items: items})
+  const newDiv = document.createElement("div");
+  newDiv.innerHTML = 
+  `<div vb-if="fiv">
+   1 {{maxim}} 1
+    <h1>first!</h1>
+  </div>
+  <input vb-model="maxim" id="first" ></input>
+  <input id="second"></input> 
+  <div>
+    <h1 id="originalElement">Second!</h1>
+  </div>
+  <div vb-for="item in items"> <h5 vb-if="fiv">{{item}} {{maxim}}</h5> {{maxim}}</div>
+  `
 
+  const elem = document.getElementById('app')
+  // elem.append(newDiv)
+  // myVueInstance.initElement(newDiv)
+  // setTimeout(() => {
+  //   myVueInstance.reactivePerems.items = ['hi 1', 'hi 2', 'hi 3']
+  //   console.log(myVueInstance.reactivePerems)
+  // }, 1000);
 }
 
 function VB_rerenderEmojiReactions () { // and scrapMessages

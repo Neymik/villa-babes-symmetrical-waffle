@@ -23,6 +23,7 @@
   "content_scripts": [
     {
       "js": [
+        "scripts/vbex/index.js",
         "scripts/miscellaneous.js",
         "scripts/content.js",
         "scripts/sellerToolModal.js",

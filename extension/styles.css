@@ -65,7 +65,7 @@
   border: 0;
   outline-offset: -8px;
   width: 90%;
-  height: 80%;
+  /* height: 80%; */
 }
 
 .VB_modalButton {
@@ -102,4 +102,55 @@
   width: 100%;
   justify-content: center;
   display: flex;
+}
+
+.VB_none{
+  display: none;
+}
+
+.VB_mb-1{
+  margin-bottom: 10px;
+}
+.VB_mb-2{
+  margin-bottom: 20px;
+}
+.VB_mb-3{
+  margin-bottom: 30px;
+}
+.VB_mb-4{
+  margin-bottom: 40px;
+}
+.VB_button{
+  /* background-color: #2fbaff; */
+  border-radius: 18px;
+  padding: 5px;
+  color: #fff;
+  /* margin-top: 10px; */
+  /* background-image: url('https://www.svgrepo.com/show/522272/send-email.svg'); */
+  width: 30px;
+  height: 30px;
+}
+.message-container {
+  display: flex;
+  padding: 10px;
+  justify-content: space-between;
+}
+.message-container + .message-container{
+  border-top: 1px solid rgb(165, 165, 165);
+  
+}
+.VB_icon{
+  width: 30px;
+  height: 30px;
+  padding: 5px;
+  cursor: pointer;
+}
+#toCopy1{
+  display: flex;
+}
+p{
+  margin: 0!important;
+  text-align: center;
+  align-items: center;
+  text-align: start;
 }

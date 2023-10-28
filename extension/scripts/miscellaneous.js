@@ -83,7 +83,6 @@ async function VB_llmRequestSend ({messageText, messageXno, taskId, directPrompt
     promptOnly,
     messageXno
   }
-
   console.log(requestBody)
   let responseData = {}
 
@@ -154,8 +153,11 @@ async function VB_llmRequestSend ({messageText, messageXno, taskId, directPrompt
     inputForm.classList.remove('VB_disabled');
   }
 
-  return responseData
+  
+  vbex.reactivePerems.inputModelResults = responseData.result.split('\n\n')
+  console.log(vbex, 'vbex.perems.inputModelResults')
 
+  return responseData
 }
 
 
