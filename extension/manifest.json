@@ -8,38 +8,34 @@
     "default_popup": "popup.html",
     "default_icon": "images/villa-babes-logo.png"
   },
-  "permissions": [
-    "tabs",
-    "storage",
-    "scripting"
-  ],
-  "host_permissions": [
-    "https://onlyfans.com/*"
-  ],
-  "optional_host_permissions":[
-    "https://*/*", 
-    "http://*/*" 
-  ],
   "content_scripts": [
     {
       "js": [
-        "scripts/vbex/index.js",
-        "scripts/miscellaneous.js",
-        "scripts/content.js",
-        "scripts/sellerToolModal.js",
-        "scripts/accessTool.js"
+        "initElements.js",
+        "dist/js/chunk-vendors.1.min.js", 
+        "dist/js/app.1.min.js"
       ],
       "css": [
-        "styles.css",
-        "ispinner.css"
+        "dist/css/app.1.css"
       ],
       "matches": [
         "https://onlyfans.com/*"
       ]
     }
   ],
-  "web_accessible_resources": [{
-    "matches": ["https://onlyfans.com/*"],
-    "resources": ["images/villa-babes-logo.png"]
-}]
+  "permissions": [
+    "activeTab",
+    "storage",
+    "scripting",
+    "webRequest",
+    "webNavigation",
+    "contextMenus",
+    "management"
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["*"],
+      "matches": ["<all_urls>"]
+    }
+  ]
 }
