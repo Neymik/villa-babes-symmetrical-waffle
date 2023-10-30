@@ -3,7 +3,7 @@
   <div v-for="item in items" :key="item">
     item: {{ item }}
   </div>
-  {{ store.count }}
+  <button @click="showPrompts()" >showPrompts</button>
 </template>
 
 <script>
@@ -32,6 +32,11 @@ export default {
     newDiv.innerHTML = '<h4 class="VB_talk">Villa talk</h4>'
     nav.append(newDiv)
     
+  },
+  methods: {
+    showPrompts(){
+      return
+    }
   },
   data() {
     return {
