@@ -1,8 +1,9 @@
 import { createApp } from 'vue';
-import App from './App.vue';
+import sideBarApp from '@/sideBarApp.vue';
+import messageApp from '@/messageApp.vue';
 import { createPinia } from 'pinia'
 
-const app = createApp(App);
+const SBapp = createApp(sideBarApp);
 const pinia = createPinia()
 
 let appDiv1 = document.getElementById('toolbar')
@@ -13,8 +14,8 @@ async function asyncWhile() {
     appDiv1 = document.getElementById('toolbar')
     i++
   }
-  app.use(pinia)
-  app.mount('#toolbar');
+  SBapp.use(pinia)
+  SBapp.mount('#toolbar');
 
   let appDiv2 = document.getElementById('VB_chatBlockHolderdiv')
   let j = 0
@@ -23,10 +24,10 @@ async function asyncWhile() {
     appDiv2 = document.getElementById('VB_chatBlockHolderdiv')
     j++
   }
-  const app2 = createApp(App);
+  const Mapp = createApp(messageApp);
 
-  app2.use(pinia)
-  app2.mount('#VB_chatBlockHolderdiv');
+  Mapp.use(pinia)
+  Mapp.mount('#VB_chatBlockHolderdiv');
 }
 
 asyncWhile()

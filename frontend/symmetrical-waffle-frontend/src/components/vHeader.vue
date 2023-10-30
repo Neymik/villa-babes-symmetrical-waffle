@@ -8,15 +8,21 @@
 </template>
 
 <script>
+import { useSidebarAppState } from '@/stores/sidebarAppState'
+
+
 export default {
+  setup() {
+    const sidebarAppState = useSidebarAppState()
+    return {sidebarAppState}
+  },
   name: 'HelloWorld',
   props: {
     msg: String
   },
   methods: {
     closeWindow() {
-      const appDiv = document.getElementById('toolbar')
-      appDiv.classList.add('d-none')
+      this.sidebarAppState.isToolbarVisible = !this.sidebarAppState.isToolbarVisible
     }
   },
 }
@@ -32,9 +38,5 @@ export default {
 h1{
   padding: 5px;
   margin: 0;
-}
-
-.d-none{
-  display: none;
 }
 </style>
