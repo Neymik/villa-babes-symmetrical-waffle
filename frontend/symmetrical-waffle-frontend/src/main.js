@@ -2,6 +2,7 @@ import { createApp } from 'vue';
 import sideBarApp from '@/sideBarApp.vue';
 import messageApp from '@/messageApp.vue';
 import { createPinia } from 'pinia'
+import '@/assets/css/main.css';
 
 const SBapp = createApp(sideBarApp);
 const pinia = createPinia()

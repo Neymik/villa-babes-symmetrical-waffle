@@ -2,7 +2,7 @@ async function main() {
   let div1 = document.createElement('div');
   div1.id = 'toolbar';
   div1.classList.add('d-none')
-  div1.classList.add('toolbar-app')
+  div1.classList.add('w-0')
   document.body.appendChild(div1);
 
   
