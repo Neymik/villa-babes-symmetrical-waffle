@@ -126,7 +126,6 @@ export default {
 }
 .buttons-container{
   display: flex;
-  flex-direction: column;
   justify-items: center;
   justify-content: center;
   padding: 5px;
@@ -136,9 +135,6 @@ export default {
   height: 26px;
   object-fit: cover;
   cursor: pointer;
-}
-.buttons-container img + img{
-  margin-top: 10px;
 }
 p{
   display: flex;
