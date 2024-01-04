@@ -9,6 +9,7 @@
     "pm2": "pm2 start init/pm2.config.cjs"
   },
   "devDependencies": {
+    "@types/selenium-webdriver": "^4.1.19",
     "bun-types": "latest"
   },
   "peerDependencies": {
@@ -17,9 +18,12 @@
   "dependencies": {
     "@fastify/cors": "^8.4.0",
     "@fastify/middie": "^8.3.0",
+    "axios": "^1.6.0",
     "fastify": "^4.23.2",
     "openai": "^4.6.0",
     "postgres": "^3.3.5",
-    "redis": "^4.6.9"
+    "puppeteer-core": "^21.4.1",
+    "redis": "^4.6.9",
+    "selenium-webdriver": "^4.14.0"
   }
 }
